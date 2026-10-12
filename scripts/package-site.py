@@ -1,0 +1,9 @@
+from pathlib import Path
+import zipfile
+root=Path(__file__).resolve().parent.parent
+output=root/'build/cloudflare-pages.zip'
+output.parent.mkdir(exist_ok=True)
+with zipfile.ZipFile(output,'w',zipfile.ZIP_DEFLATED) as archive:
+    for file in sorted((root/'dist').rglob('*')):
+        if file.is_file(): archive.write(file,file.relative_to(root/'dist'))
+print(output)

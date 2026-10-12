@@ -1,0 +1,47 @@
+工单日报练习包 v1.0
+AI 经营交付效能专项组
+
+全部数据为教学虚构数据。Python 3.9+，不需要第三方依赖。
+
+1. 将 ticket-daily-report.zip 导入 Qoder 的技能管理，或让 Qoder 把本包 ticket-daily-report/ 放到当前产品的正确技能目录。
+   Qoder 与 QoderWork、IDE、CLI 的目录和加载入口不同。当前产品指南：
+   https://docs.qoder.com/zh/qoder/skills
+   https://docs.qoder.com/zh/qoderwork/skills
+   https://docs.qoder.com/zh/cli/Skills
+   先检查说明和脚本，再导入。这个练习不要求修改全局权限。
+
+2. 开全新 Chat，输入 / 选择 ticket-daily-report。
+   提供 fixtures/normal.json，统计日期 2026-10-10，指定一个新的结果目录。
+   要求读取数据契约、业务规则，运行固定脚本，校验失败停止。
+
+   不依赖 Agent 的直接运行方法（在本包根目录运行）：
+   python3 ticket-daily-report/scripts/pipeline.py --input fixtures/normal.json --date 2026-10-10 --out result-first
+
+3. 查看 report.json，与 expected/2026-10-10.json 核对。
+   应有 5 单、完成 3 单、待处理 2 单、完成工单总耗时 195 分钟、平均耗时 65 分钟。
+   evidence.json 应为 validation=PASS，输入 7 条，重复剔除 1 条，跨日期剔除 1 条。
+   统计的是指定日期创建工单的当前状态，不能把它当作当日完成量。
+
+4. 再开新 Chat，使用 fixtures/changed.json，统计日期 2026-10-11，输出到另一个新目录。
+   应与 expected/2026-10-11.json 一致。字段顺序、输入顺序与无关字段不应改变计算口径。
+
+5. 分别开新 Chat，使用 missing-field.json、conflicting-id.json。
+   应停止并指出缺字段或 ID 冲突，不创建成功结果，也不编造字段。
+
+6. 手动选择成功后，再试自然语言“用这份工单明细生成创建日期为 2026-10-10 的日报”。
+   检查是否找到本 Skill，实际调用什么脚本，是否核验结果。
+   最后让另一位同事安装同版本再试。程序测试通过不能代替这一步。
+
+验证记录（自行填写）：
+产品与版本：
+Skill 版本：
+案例与日期：
+是否选择正确 Skill：
+实际脚本命令和退出码：
+校验状态：
+预期与实际结果是否一致：
+输出文件位置：
+失败或缺口：
+
+遇到问题，请联系张坚、李琦，附脱敏输入样例、预期结果和出错截图。
+本包不会联网、发送消息或写回业务系统。

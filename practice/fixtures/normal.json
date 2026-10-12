@@ -1,0 +1,9 @@
+[
+  {"ticket_id":"T001","created_date":"2026-10-10","status":"completed","minutes":60},
+  {"ticket_id":"T002","created_date":"2026-10-10","status":"open","minutes":0},
+  {"ticket_id":"T003","created_date":"2026-10-10","status":"completed","minutes":45},
+  {"ticket_id":"T004","created_date":"2026-10-10","status":"completed","minutes":90},
+  {"ticket_id":"T004","created_date":"2026-10-10","status":"completed","minutes":90},
+  {"ticket_id":"T005","created_date":"2026-10-10","status":"open","minutes":0},
+  {"ticket_id":"T006","created_date":"2026-10-11","status":"completed","minutes":30}
+]
