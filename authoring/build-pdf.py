@@ -28,7 +28,7 @@ font=Path(os.environ.get('PDF_CJK_FONT','/System/Library/Fonts/Supplemental/Aria
 pdfmetrics.registerFont(TTFont('CourseCJK',str(font)))
 notes=root/'dist/downloads/skill-engineering-notes.pdf'
 c=canvas.Canvas(str(notes),pagesize=A4)
-c.setTitle(f'Skill Engineering 本页说明 v{data["version"]}')
+c.setTitle(f'Skill Engineering 逐页讲解 v{data["version"]}')
 c.setAuthor(data['byline'])
 style=ParagraphStyle('explanation',fontName='CourseCJK',fontSize=12,leading=22,
                      textColor='#082F75',wordWrap='CJK')
@@ -36,7 +36,7 @@ width,height=A4
 for i,s in enumerate(data['slides'],1):
     c.setFillColorRGB(.03,.18,.46)
     c.setFont('CourseCJK',11)
-    c.drawString(36,height-42,f'Skill Engineering · 本页说明 · v{data["version"]}')
+    c.drawString(36,height-42,f'Skill Engineering · 逐页讲解 · v{data["version"]}')
     title=Paragraph(escape(s['title']),ParagraphStyle('title',parent=style,fontSize=22,leading=31))
     _,h=title.wrap(width-72,100)
     title.drawOn(c,36,height-76-h)
@@ -45,7 +45,7 @@ for i,s in enumerate(data['slides'],1):
     c.drawImage(ImageReader(str(root/f'build/slides/slide-{i:02d}.png')),36,image_top-image_height,
                 width=image_width,height=image_height)
     y=image_top-image_height-38
-    c.setFont('CourseCJK',14);c.drawString(36,y,'本页说明')
+    c.setFont('CourseCJK',14);c.drawString(36,y,'本页讲解')
     explanation=Paragraph(escape(s['explanation']['text']),style)
     _,h=explanation.wrap(width-72,250)
     explanation.drawOn(c,36,y-18-h)

@@ -5,7 +5,7 @@ import {chromium} from 'playwright';
 
 const root=path.resolve(import.meta.dirname,'..');
 const data=JSON.parse(await fs.readFile(path.join(root,'src/content.json'),'utf8'));
-const out=path.resolve(root,'../evidence/course-v2-1/browser');
+const out=process.env.COURSE_TEST_EVIDENCE_DIR||path.resolve(root,`../evidence/course-v${data.version.replace('.', '-')}/browser`);
 await fs.mkdir(out,{recursive:true});
 const base=process.env.COURSE_TEST_URL||'http://127.0.0.1:8765/';
 const browser=await chromium.launch({headless:true});
@@ -13,6 +13,14 @@ const results=[];
 try {
  const page=await browser.newPage({viewport:{width:1440,height:1050}});
  const errors=[];page.on('pageerror',error=>errors.push(error.message));
+ await page.goto(base+'#slide-02');
+ const expected=JSON.parse(await fs.readFile(path.join(root,'practice/fixtures/normal.json'),'utf8'));
+ assert.equal(await page.locator('#slide-02 .sample-table tbody tr').count(),expected.length);
+ const rows=await page.locator('#slide-02 .sample-table tbody tr').allTextContents();
+ expected.forEach((row,i)=>{assert.ok(rows[i].includes(row.ticket_id));assert.ok(rows[i].includes(row.created_date));});
+ assert.ok(await page.locator('#slide-02 .sample-task').textContent().then(text=>text.includes('10 月 10 日')&&text.includes('去重')&&text.includes('平均耗时')));
+ assert.ok(await page.locator('#slide-02 .sample-output').textContent().then(text=>text.includes('65 分钟')));
+ results.push('case example: complete seven fixture rows and explicit AI task/report visible PASS');
  await page.goto(base);
  for(let i=0;i<data.slides.length;i++){
   if(i)await page.locator('#next').click();
@@ -54,6 +62,10 @@ try {
   const notes=await lesson.locator('.explanation').boundingBox();
   assert.ok(notes.y>=diagram.y+diagram.height-1);
  }
+ await page.goto(base+'#slide-02');
+ await page.locator('#slide-02 .sample-table').scrollIntoViewIfNeeded();
+ assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ await page.locator('.lesson').nth(1).screenshot({path:path.join(out,'mobile-case.png')});
  await page.goto(base+'#slide-08');
  await page.waitForFunction(()=>document.querySelector('.slide.active')?.id==='slide-08');
  await page.screenshot({path:path.join(out,'mobile-8.png'),fullPage:false});

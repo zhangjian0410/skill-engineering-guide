@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {Presentation,PresentationFile} from '@oai/artifact-tool';
 import {pathToFileURL} from 'node:url';
+import {loadTicketExample} from '../scripts/course-data.mjs';
 const skill=process.env.PRESENTATIONS_SKILL_DIR;
 if(!skill)throw new Error('Set PRESENTATIONS_SKILL_DIR to the installed Codex presentations skill directory.');
 const {finalizePresentation}=await import(pathToFileURL(path.join(skill,'container_tools/artifact_tool_utils.mjs')).href);
@@ -20,10 +21,10 @@ function text(slide,name,value,x,y,w,h,size=24,color=C.navy,bold=false,align='le
 function label(slide,name,value,x,y,w,h=43){shape(slide,name+'-band',x,y,w,h,C.blue);text(slide,name,value,x+18,y+8,w-36,h-8,24,'#FFFFFF',true);}
 function arrow(slide,x,y,w=34,h=32){shape(slide,'flow-arrow',x,y,w,h,C.cyan,'rightArrow','none');}
 function panel(slide,name,title,x,y,w,h){shape(slide,name,x,y,w,h);label(slide,name+'-label',title,x,y,w,46);}
-function table(slide,name,values,x,y,width,widths,heights){
+function table(slide,name,values,x,y,width,widths,heights,fontSize=23,inset=16){
  const t=slide.tables.add({rows:values.length,columns:values[0].length,left:x,top:y,width,height:heights.reduce((a,b)=>a+b,0),columnWidths:widths,values});
  t.borders.assign({style:'solid',fill:C.line,width:1});
- heights.forEach((h,r)=>{t.rows[r].height=h;values[r].forEach((v,c)=>{const cell=t.getCell(r,c);cell.fill=r===0?C.blue:c===0?C.soft:'#FFFFFF';cell.text.style={typeface:font,fontSize:r===0?24:23,color:r===0?'#FFFFFF':C.navy,bold:r===0||c===0,verticalAlignment:'middle',insets:16,wrap:'square'};});});
+ heights.forEach((h,r)=>{t.rows[r].height=h;values[r].forEach((v,c)=>{const cell=t.getCell(r,c);cell.fill=r===0?C.blue:c===0?C.soft:'#FFFFFF';cell.text.style={typeface:font,fontSize:r===0?fontSize+1:fontSize,color:r===0?'#FFFFFF':C.navy,bold:r===0||c===0,verticalAlignment:'middle',insets:inset,wrap:'square'};});});
  return t;
 }
 function footer(slide,s,i){
@@ -42,10 +43,14 @@ for(const [i,s] of data.slides.entries()){
   s.panels.forEach((q,j)=>{const x=48+j*622;panel(slide,`panel-${j}`,q.label,x,254,562,312);q.items.forEach(([a,b],k)=>{const y=316+k*60;text(slide,`item-${j}-${k}-title`,a,x+22,y,518,27,23,C.navy,true);text(slide,`item-${j}-${k}-body`,b,x+22,y+28,518,26,18,C.muted);});});arrow(slide,622,389,36,44);
  }
  if(s.kind==='case'){
-  text(slide,'input-label',s.input_label,48,250,650,33,23,C.blue,true);
-  table(slide,'case-table',s.table,48,301,570,[174,396],[48,60,69,67]);
-  s.panels.forEach((q,j)=>{const x=650+j*299;panel(slide,`case-panel-${j}`,q.label,x,254,282,291);q.items.forEach(([a,b],k)=>{const y=320+k*70;text(slide,`case-${j}-${k}-title`,a,x+18,y,248,27,23,C.navy,true);text(slide,`case-${j}-${k}-body`,b,x+18,y+31,248,35,19,C.muted);});});
-  text(slide,'case-result',s.result,48,558,1184,33,22,C.blue,true);
+  const example=await loadTicketExample(root,s.sampleFixture);
+  text(slide,'input-label',s.input_label,48,250,590,30,23,C.blue,true);
+  table(slide,'case-table',example.table,48,292,590,[95,176,135,184],[36,...example.rows.map(()=>33)],18,6);
+  text(slide,'sample-note',s.sample_note,48,570,590,27,18,C.muted);
+  panel(slide,'sample-task',s.task_label,675,254,557,174);
+  text(slide,'sample-task-body',s.task,693,315,521,98,22,C.navy);
+  panel(slide,'sample-output',s.output_label,675,445,557,140);
+  s.output_lines.forEach((line,j)=>text(slide,`sample-output-${j}`,line,693,505+j*36,521,32,j===0?23:19,C.blue,j===0));
  }
  if(s.kind==='progression'){
   shape(slide,'formula-panel',48,246,1184,99,'#F3FAFF');text(slide,'formula',data.formula,64,258,1155,38,24,C.navy,true);
@@ -79,7 +84,7 @@ for(const [i,s] of data.slides.entries()){
   panel(slide,'feedback-panel','问题反馈',689,256,543,311);text(slide,'feedback-title',s.feedback_title,711,324,499,90,34,C.navy,true);s.feedback_items.forEach((value,j)=>text(slide,`feedback-item-${j}`,value,711,436+j*35,499,31,23,C.blue));
  }
  footer(slide,s,i);
- slide.speakerNotes.text=`本页说明：${s.explanation.text}\n\n继续阅读：deep.html#${s.explanation.deepAnchor}\n\n来源与对应：${s.source}\n本课件依据原分享对话和原图片，用户要求保留知识主线与视觉。参考： https://agentskills.io/specification https://docs.qoder.com/zh/qoder/skills https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices \n\n${s.kind==='package'?'目录中的脚本是职责示例。真实下载练习按三阶段 pipeline.py 执行，未安装或验证目标同事的 Qoder。':''}`;
+ slide.speakerNotes.text=`本页讲解：${s.explanation.text}\n\n继续阅读：deep.html#${s.explanation.deepAnchor}\n\n来源与对应：${s.source}\n本课件依据原分享对话和原图片，用户要求保留知识主线与视觉。参考： https://agentskills.io/specification https://docs.qoder.com/zh/qoder/skills https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices \n\n${s.kind==='package'?'目录中的脚本是职责示例。真实下载练习按三阶段 pipeline.py 执行，未安装或验证目标同事的 Qoder。':''}`;
 }
 await fs.mkdir(path.join(root,'build/slides'),{recursive:true});
 for(const [i,slide] of p.slides.items.entries()){

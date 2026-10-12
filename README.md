@@ -58,3 +58,9 @@ npm run package
 在解压练习包根目录运行 `python3 check-regression.py --out ../ticket-regression-first`。检查器核对独立 expected 和异常停止；`example-results/` 保留受控副本的真实失败与修复记录。它不证明 Agent 行为或跨机通过。
 
 实现检查：`python3 tests/regression-checker.py`、`node --test tests/self-review.test.mjs`。启动本地预览后，`node tests/course-browser.mjs` 检查桌面、手机、无 JS 和全屏。浏览器检查需要 Playwright；它仅是作者验证依赖，不是学员练习依赖。
+
+## v2.2 示例与讲解
+
+第 2 页从同一份 `practice/fixtures/normal.json` 读取完整 7 行数据，展示要交给 AI 的任务和日报计算过程。网页表格与 PPTX 可编辑表格通过 `scripts/course-data.mjs` 读取同一来源。九页讲解改为围绕工单案例的讲述，并同步到 PPTX 备注和讲解 PDF。练习包、自评模板及其历史运行记录沿用原版本。
+
+浏览器检查按内容版本保存证据；设置 `COURSE_TEST_EVIDENCE_DIR` 可为本地与公网执行分别指定目录。
