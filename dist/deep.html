@@ -1,36 +1,161 @@
-<!doctype html><html lang="zh-CN"><head><title>深入阅读与实践 · Skill Engineering</title><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="用虚构工单完成一次输入、预期、运行、比对、修复与复用验证。"><link rel="stylesheet" href="style.css"><script src="app.js" defer></script></head><body><header class="site-header"><a class="brand" href="index.html">Skill Engineering<span>入门自学</span></a><nav aria-label="资源"><a href="self-review.html">自评提示词</a><a href="downloads/poster.png" download>海报</a><a href="downloads/skill-engineering.pdf" download>课件 PDF</a><a href="downloads/skill-engineering-notes.pdf" download>讲解 PDF</a><a href="downloads/skill-engineering.pptx" download>PPTX</a></nav></header><main class="reading"><a class="text-link" href="index.html#slide-07">返回第 7 页</a><p class="lesson-label">按需阅读 · v2.2</p><h1>把第一件小事做成 Skill</h1><p class="lead">用已有工单样例，完成一次运行、比对与重跑。</p>
-<section id="practice-route"><h2>从自评走到实际验证</h2><p>选任务并自评 → 确认三类用例及预期 → 在新 Chat 或固定脚本中运行 → 查看差异 → 修复后重跑 → 同版本换人验证。</p><p><a href="self-review.html">先做只读自评</a>，根据报告安排验证。自评报告提供诊断；实际运行记录回答本次做了什么、是否达到预期。不要把一份报告直接当作运行通过。</p><p>业务负责人确认规则和最初预期；固定代码比对可机械检查的结果；写作和分析使用来源、代表样例与评审标准；流程任务核对步骤、分支和停止行为。人继续抽查尚未覆盖的问题。</p></section>
-<section id="ticket-practice"><h2>先跑一次工单日报</h2><p>练习使用虚构 JSON 工单，Python 3.9+，只用标准库。它统计指定日期创建工单的当前状态。实际 Excel 接入需另行实现字段读取，不能把结果当作当天完成量。</p><p><a href="downloads/practice-kit.zip" download>下载完整练习包 ZIP</a> · <a href="downloads/ticket-daily-report.zip" download>下载可导入的 Skill ZIP</a></p><pre>practice-kit/
-  ticket-daily-report/   能力包：入口、规则与 pipeline.py
-  fixtures/             四个案例，覆盖三类场景
-  expected/             已确认的独立预期及依据
-  check-regression.py   批量运行与比对入口
-  example-results/      真实教学运行记录
-  GUIDE.txt             操作与记录模板</pre><p>解压后，在练习包根目录打开终端。输出位置使用包外的新目录。先读 ticket-daily-report/references/business-rules.md 和 expected/README.txt，再运行：</p><pre>python3 ticket-daily-report/scripts/pipeline.py \
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<title>从普通 Chat 到自己的 Skill · Skill Engineering</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="面向业务同事的四步跟练：普通 Chat 完成工单日报，提炼 Skill，安装，再在新 Chat 中验证。">
+<link rel="stylesheet" href="style.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#practice-route">跳到跟练步骤</a>
+<header class="site-header"><a class="brand" href="index.html">Skill Engineering<span>业务同事跟练</span></a><nav aria-label="资源"><a href="index.html#slide-07">返回课件</a><a href="#advanced">进阶阅读</a><a href="downloads/skill-engineering.pdf" download>课件 PDF</a><a href="downloads/skill-engineering.pptx" download>PPTX</a></nav></header>
+<main class="reading">
+<p class="lesson-label">四步跟练 · 2026-10-12</p>
+<h1>从一次 Chat 到自己的 Skill</h1>
+<p class="lead">先把一份工单日报做对，再把这次方法保存下来，换个 Chat 继续用。</p>
+<section id="practice-route">
+<h2>从还没安装日报 Skill 开始</h2>
+<p>准备好能读取文件、运行处理并保存结果的 Qoder。全部输入都是虚构工单，可以放心跟练。你负责确认规则、核对数字；处理代码和 Skill 文件交给 AI 整理。</p>
+<ol>
+<li><a href="#ticket-practice">普通 Chat 完成任务</a>：得到一份核对正确的日报。</li>
+<li><a href="#qoder">提炼 Skill</a>：得到自己创建的完整 Skill ZIP。</li>
+<li><a href="#install-skill">安装</a>：在已安装列表中找到它。</li>
+<li><a href="#new-chat">新 Chat 验证</a>：只给数据、日期和输出位置，重做日报。</li>
+</ol>
+<p>今天先完成这四步。批量检查、换电脑和成熟度等内容在<a href="#advanced">进阶阅读</a>，用到时再看。</p>
+</section>
+<section id="ticket-practice">
+<h2>1. 用普通 Chat 完成一次工单日报</h2>
+<p><strong>现在有什么：</strong>只有一份工单数据，还没有你自己的日报 Skill。</p>
+<h3>你要做什么</h3>
+<ol>
+<li><a href="downloads/ticket-inputs/normal.json" download>下载工单样例 normal.json</a>，保存在自己找得到的文件夹。JSON 是这次练习的数据文件，无需手工编辑。</li>
+<li>在 Qoder 新建一个普通任务，把这份文件作为附件提供，或选择它所在的工作目录。</li>
+<li>展开下面的提示词，复制到 Chat。此时直接描述任务，不需要选择日报 Skill。</li>
+</ol>
+<details class="prompt"><summary>复制：普通 Chat 的日报任务</summary><pre id="chat-task">请读取我提供的 normal.json，生成 2026-10-10 的工单日报。本次先完成普通任务，不创建或安装日报 Skill。
+
+字段含义：ticket_id 是工单 ID；created_date 是创建日期；status 为 completed（完成）或 open（待处理）；minutes 是耗时分钟数。
+处理规则：先检查所有记录的四个字段。ID 需非空，日期需为有效的 YYYY-MM-DD，状态只接受 completed 或 open；minutes 必须为整数，完成单大于 0，待处理单为 0。缺字段或值不合法时停止并说明原因。相同 ID 的四个字段完全一致时保留一条，内容冲突时停止。
+只统计 created_date 等于 2026-10-10 的工单当前状态。列出总工单数、完成数、待处理数、完成工单总耗时和完成单平均耗时。平均耗时只除以完成单数，保留两位小数；没有完成单时标为不适用。
+
+请实际运行计算，在工作目录的新结果文件夹中保存 report.txt，并说明去重、日期排除和计算过程，同时保留实际使用的处理代码，告诉我文件位置。无法读取或运行时说明缺口。我会自行核对结果，确认后再继续。</pre><button type="button" data-copy="chat-task">复制提示词</button><span class="copy-status" aria-live="polite"></span></details>
+<h3>应该看到什么</h3>
+<p>Qoder 返回日报文件的位置和计算过程。打开日报，逐项核对：</p>
+<table><thead><tr><th scope="col">核对项</th><th scope="col">本例应得到</th></tr></thead><tbody><tr><th scope="row">统计日期</th><td>2026-10-10</td></tr><tr><th scope="row">总工单数</th><td>5 单</td></tr><tr><th scope="row">完成 / 待处理</th><td>3 单 / 2 单</td></tr><tr><th scope="row">完成工单总耗时</th><td>195 分钟</td></tr><tr><th scope="row">完成单平均耗时</th><td>195 ÷ 3 = 65 分钟</td></tr></tbody></table>
+<p>原文件有 7 行：T004 完全重复，保留一条；T006 是 10 月 11 日创建的，本次排除。完成单耗时为 60、45、90 分钟，平均只除以 3 个完成单。这里统计的是 10 月 10 日创建工单的当前状态。</p>
+<p><strong>核对一致后再继续。</strong>如果平均值出现 39 分钟，让 Qoder 检查是否错误地除以了全部 5 单。如果没读到附件、没有实际处理或数字不符，先在这个 Chat 中解决，并保存核对后的日报和实际使用的处理代码。</p>
+</section>
+<section id="qoder">
+<h2>2. 把刚才成功的方法提炼成 Skill</h2>
+<p><strong>现在有什么：</strong>同一个 Chat 中已有输入、规则、处理代码和核对正确的日报。</p>
+<h3>你要做什么</h3>
+<p>留在刚才的 Chat，复制下面的创建提示词。自己的练习技能统一命名为 <code>my-ticket-daily-report</code>，方便和本页后面的参考包区分。本步只生成文件，安装在第三步做。</p>
+<details class="prompt"><summary>复制：把成功任务提炼成 Skill</summary><pre id="create">刚才的工单日报已核对正确。请把这次方法整理成名为 my-ticket-daily-report 的可复用 Skill，供新 Chat 使用。
+
+沿用已确认的输入、统计规则和异常停止条件。入口为 SKILL.md，按当前产品支持的格式填写名称和用途说明；详细规则放 references/，将刚才实际使用且已核对的处理代码保存到 scripts/。输入文件、统计日期和输出位置应可指定，每次使用新输出目录。
+执行流程写清：读取规则，检查输入，调用已有脚本，核对结果，通过后交付 report.txt 和核对记录；检查失败时停止并说明原因。不要依赖这次聊天历史补齐规则，不自动覆盖已有结果。
+
+请生成完整文件夹并压缩为 my-ticket-daily-report.zip，检查包中入口、规则、脚本及相对引用齐全，列出文件清单和 ZIP 位置。另行保留第一步输入与我核对过的正确结果，用于新 Chat 验证。只生成文件，本步不安装 Skill。</pre><button type="button" data-copy="create">复制提示词</button><span class="copy-status" aria-live="polite"></span></details>
+<h3>应该看到什么</h3>
+<p>Qoder 给出 <code>my-ticket-daily-report.zip</code> 的文件位置，列出里面保存的内容：</p>
+<ul><li><code>SKILL.md</code>：何时使用、需要什么输入、怎样处理、何时停止。</li><li>业务规则文件：日期筛选、去重和平均耗时的口径。</li><li>处理脚本：保存已经核对过的计算方法，供下次调用。</li></ul>
+<p>另行保留第一步的输入和确认结果，供第四步核对。如果它只在 Chat 中输出了一段说明，让它继续生成完整文件夹并压缩。打开 Skill 说明，检查规则是否与第一步一致；确认脚本只处理指定的本地文件。</p>
+<p><strong>有了完整 ZIP 才进入安装。</strong>业务同事无需自己编写代码，但要确认保存的方法就是刚才做对的方法。</p>
+</section>
+<section id="install-skill">
+<h2>3. 安装自己刚创建的 Skill</h2>
+<p><strong>现在有什么：</strong>第二步生成的 <code>my-ticket-daily-report.zip</code>，尚未安装。</p>
+<h3>你要做什么</h3>
+<ol><li>在 Qoder 左侧打开<strong>扩展 → 技能</strong>。</li><li>选择<strong>添加技能 → 上传技能</strong>，上传第二步的完整 ZIP。这里上传自己创建的包。</li><li>在<strong>已安装</strong>列表中确认 <code>my-ticket-daily-report</code>。同名技能已经存在时，先核对版本，避免覆盖别人的内容。</li></ol>
+<p>操作依据：<a href="https://docs.qoder.com/zh/qoder/skills" target="_blank" rel="noopener">Qoder 官方安装指南</a>。不同版本的按钮名称可能略有差异，找到上传本地技能的入口即可。</p>
+<h3>应该看到什么</h3>
+<p>已安装列表里出现你的技能名称。再新建一个任务，在输入框键入 <code>/</code>，建议列表中也能找到它。</p>
+<p>如果找不到，先检查 ZIP 中是否包含 <code>SKILL.md</code> 和所需脚本。可以把报错给刚才创建文件的 Chat，请它检查包结构。安装成功后进入第四步。</p>
+</section>
+<section id="new-chat">
+<h2>4. 在新 Chat 中验证能否复用</h2>
+<p><strong>现在有什么：</strong>已安装的日报 Skill，以及第一步保存的输入和正确结果。</p>
+<h3>你要做什么</h3>
+<ol><li>新建一个全新的任务，不沿用前两步的 Chat。</li><li>输入 <code>/</code>，选择 <code>my-ticket-daily-report</code>。</li><li>重新提供 <code>normal.json</code>，复制下面的提示词。输出使用一个新的文件夹。</li></ol>
+<details class="prompt"><summary>复制：安装后在新 Chat 中运行</summary><pre id="practice">请使用已安装的 my-ticket-daily-report Skill，读取我重新提供的 normal.json。
+统计日期：2026-10-10。
+输出位置：当前工作目录下新的 ticket-second-run 文件夹；如果已存在，请换一个新目录。
+请按照 Skill 中保存的规则调用已有处理脚本，核对通过后交付日报和核对记录，并说明实际脚本路径与输出位置。无法读取输入或核对失败时停止并说明原因。</pre><button type="button" data-copy="practice">复制提示词</button><span class="copy-status" aria-live="polite"></span></details>
+<h3>应该看到什么</h3>
+<p>Qoder 读取已安装的 Skill，调用其中保存的处理脚本，交付新的日报和核对记录。日报仍为 5 单、完成 3 单、待处理 2 单，完成单平均耗时 65 分钟。</p>
+<p>检查执行记录中的脚本路径和输出文件，确认它确实用了你保存的方法。只看到正确数字，还需要核对实际执行过程。如果它要求你重新讲整套业务规则，返回第二步补齐 Skill，再更新安装并重试。</p>
+<h3>再试一次变化和一次异常</h3>
+<ul><li><a href="downloads/ticket-inputs/changed.json" download>下载变化样例 changed.json</a>。另开新 Chat，选择同一个 Skill，把日期改为 <code>2026-10-11</code>，输出到另一新目录。应该得到 1 单完成、0 单待处理、总耗时 30 分钟、平均 30 分钟。</li><li><a href="downloads/ticket-inputs/missing-field.json" download>下载缺字段样例 missing-field.json</a>。另开新 Chat，选择同一个 Skill，日期仍用 <code>2026-10-10</code>。应该指出缺失字段并停止，不生成成功日报。</li></ul>
+<p><strong>这轮练习完成的标志：</strong>普通 Chat 中做对一次，保存成 Skill 并安装；新 Chat 能复用，同口径处理变化，遇到缺字段能停下来。记下输入、日期、实际结果、输出位置和遇到的问题。</p>
+</section>
+<section id="advanced">
+<h2>进阶阅读：四步完成后再看</h2>
+<p>下面按需要选读。批量检查适合修改脚本后重跑；换人验证适合准备分享；自评适合已有自己的 Skill、想找缺口时使用。</p>
+</section>
+<section id="reference-skill">
+<h2>参考包：对照已有实现</h2>
+<p><a href="downloads/practice-kit.zip" download>下载完整参考练习包</a> · <a href="downloads/ticket-daily-report.zip" download>下载现成 Skill ZIP</a></p>
+<p>参考 Skill 名为 <code>ticket-daily-report</code>，包含固定脚本和已确认的预期。它与四步中自己创建的 <code>my-ticket-daily-report</code> 是两个包。需要对照实现时再看；导入参考包属于练习使用现成 Skill。</p>
+<p>参考包的 <code>GUIDE.txt</code> 说明现成包的安装方式；<code>fixtures/</code> 放输入，<code>expected/</code> 放独立预期，<code>example-results/</code> 放失败与修复的教学记录。</p>
+<details><summary>技术同事：不经过 Qoder，直接运行参考脚本</summary><p>解压完整包，进入解压根目录。需要 Python 3.9+，只用标准库。读业务规则和 <code>expected/README.txt</code>，然后运行：</p><pre>python3 ticket-daily-report/scripts/pipeline.py \
   --input fixtures/normal.json --date 2026-10-10 \
-  --out ../ticket-first-run</pre><p>通过后生成 report.json、report.txt、evidence.json。10 月 10 日为 5 单，完成 3 单、待处理 2 单，总完成耗时 195 分钟，完成单平均 195 ÷ 3 = 65 分钟。open 工单不进入分母。evidence.json 中数量守恒检查为 PASS，还要用独立预期核对结果。</p><details class="prompt"><summary>给 Qoder 的练习提示词</summary><pre id="practice">请使用 ticket-daily-report Skill，对练习包 fixtures/normal.json 生成日报。统计日期为 2026-10-10，输出到一个新的结果目录。先读取数据契约与业务规则，再运行 scripts/pipeline.py。校验失败时停止并说明原因，校验通过后交付日报和 evidence.json。我会用 expected/2026-10-10.json 核对结果。</pre><button type="button" data-copy="practice">复制提示词</button><span class="copy-status" aria-live="polite"></span></details></section>
-<section id="qoder"><h2>在新 Chat 中运行</h2><p>在 Qoder 的扩展 → 技能中添加完整 Skill ZIP，确认出现在已安装中。新建任务，输入 / 选择技能，再提供练习输入、日期与新输出位置。手动选择成功后，再测试自然语言能否发现。</p><p>QoderWork 的本地目录为 ~/.qoderwork/skills/；CLI 的用户级目录为 ~/.qoder/skills/，项目级为 .qoder/skills/。各产品分别记录加载与运行结果。菜单名称按当前版本核对，安装不会绕过原有访问控制。</p><p><a href="https://docs.qoder.com/zh/qoder/skills" target="_blank" rel="noopener">Qoder 官方指南</a> · <a href="https://docs.qoder.com/zh/qoderwork/skills" target="_blank" rel="noopener">QoderWork 指南</a> · <a href="https://docs.qoder.com/zh/cli/Skills" target="_blank" rel="noopener">CLI 指南</a></p><details class="prompt"><summary>从成功任务提炼 Skill</summary><pre id="create">请把刚才成功完成的工单日报任务提炼成一个可复用 Skill。写清何时使用、必需输入、统计口径、输出和停止条件。入口放 SKILL.md，详细规则放 references/，把已经验证的关键数据处理保存到 scripts/。不要创建用不到的空目录。不要依赖这次聊天历史，也不要编造缺失口径。同时保存一份输入、确认的业务口径和核对过的结果；提供正常、变化、异常三类验证样例，我会在新 Chat 中测试。</pre><button type="button" data-copy="create">复制提示词</button><span class="copy-status" aria-live="polite"></span></details></section>
-<section id="regression"><h2>一条命令重跑四个案例</h2><p>正常和变化案例比较全部已确认字段；两种异常检查非零退出、明确原因，以及没有成功结果目录。检查器调用固定脚本；它没有证明 Qoder 找到并实际调用了脚本。</p><pre>python3 check-regression.py --out ../ticket-regression-first</pre><table><thead><tr><th>场景</th><th>输入</th><th>独立验收依据</th></tr></thead><tbody><tr><td>正常</td><td>normal.json，10 月 10 日</td><td>expected/2026-10-10.json：5 / 3 / 2，完成单平均 65 分钟</td></tr><tr><td>可处理变化</td><td>changed.json，10 月 11 日</td><td>expected/2026-10-11.json：1 单完成，平均 30 分钟；字段和输入重排不影响口径</td></tr><tr><td>应停止异常</td><td>missing-field.json</td><td>说明缺字段；非零退出；没有成功目录</td></tr><tr><td>应停止异常</td><td>conflicting-id.json</td><td>说明重复 ID 内容冲突；非零退出；没有成功目录</td></tr></tbody></table><p>打开输出目录中的 regression.json，查看每案输入摘要、脚本与规则摘要、退出码、预期、实际、差异及 PASS / FAIL / UNKNOWN。输出不符预期为 FAIL；无法执行、未测或环境缺失为 UNKNOWN。四案全通过，只覆盖这组固定脚本案例。</p><p>业务规则改变时，要说明依据并更新预期版本。当前脚本结果不能自动成为自己的正确标准。</p><details class="prompt"><summary>为自己的 Skill 准备回归计划</summary><pre id="regression-plan">请为这个 Skill 准备回归验证计划。先只读其入口、规则、实现和已有用例，按任务类型列出正常、可处理变化、应停止异常三类代表场景。每案写明输入、独立预期或评审标准、依据、运行方式、输出位置与通过条件。已有可信预期可引用；缺失时标待确认，不能直接把当前 Skill 输出当标准。数据任务安排关键字段比对，写作分析安排来源和代表样例评审，流程任务安排分支与停止核对。分开记录固定脚本结果与 Agent 实际发现、调用和停止行为；未运行部分为 UNKNOWN。本次只准备计划，不运行、修改或安装任何内容。</pre><button type="button" data-copy="regression-plan">复制提示词</button><span class="copy-status" aria-live="polite"></span></details></section>
-<section id="repair-demo"><h2>一次真实的失败、修复与重跑</h2><p>受控教学副本曾错误地用所有工单数作为平均耗时的分母，内部数量校验仍通过。正常案例得到 39 分钟，独立预期为 65 分钟。回归检查器报告 FAIL；修复副本恢复完成单分母后，四个案例重跑通过。</p><p>这些记录由本次实际执行生成。正式 Skill 没有注入错误；expected 文件也没有为迎合输出而修改。你可以下载练习包查看 example-results/before-fix.json 与 after-fix.json，并阅读同目录 README.txt。</p><pre>预期：195 ÷ 3 = 65
-错误副本：195 ÷ 5 = 39 → normal FAIL
-修复后：195 ÷ 3 = 65 → 四案 PASS</pre><p>先定位口径或实现的差距，修复对应部分，再用新的输出目录重跑完整用例。不要只修改报告中的数字，也不要把失败记录覆盖掉。未遇到的生产问题继续补入新用例。</p></section>
-<section id="migration"><h2>换人、换电脑怎样验证</h2><ol><li>带走完整能力包及同一组样例、独立预期和回归入口；核对版本或文件摘要。</li><li>记录产品、OS、Python 及必要依赖版本。检查路径是否可配置、所需权限是否已具备。</li><li>先直接运行固定脚本与回归，再在全新 Chat 中手动选择，最后测试自然语言发现。</li><li>分别核对找到技能、实际执行入口、关键结果、异常停止和输出文件；记录失败原因。</li><li>由另一位同事使用同版本复测。没有第二台机器的运行记录，换机状态保持 UNKNOWN。</li></ol><pre>产品 / 版本 / OS / 依赖：
-Skill 版本或摘要：
-输入摘要 / 日期 / 预期依据：
-是否找到正确 Skill：
-实际调用的脚本 / 命令 / 退出码：
-预期 / 实际 / 差异 / 停止行为：
-输出位置 / PASS、FAIL 或 UNKNOWN / 原因：</pre><p>本次只实测本机的固定脚本和网站。目标同事的 Qoder 行为、不同机器及网络组合仍为 UNKNOWN。</p></section>
-<section id="validation-scope"><h2>验证通过意味着什么</h2><p>每次运行的结果校验检查当前产出；修改后的回归检查已知场景有没有退步；Agent Evals 检查实际选择、执行和停止。三种检查服务于不同问题。一次通过不证明所有输入永远正确，也不等于已经完成团队推广。</p><p>目标是在明确口径和支持环境内核对结果，无法判断或校验失败时正确停止。测试记录写清范围和限制，不承诺 100% 正确。</p></section>
-<section id="maturity"><h2>教学成熟度 L0–L4</h2><p>这是一份团队自评参考，沿用原课件的教学模型，属于工程建议，不是官方认证等级。</p><table><thead><tr><th>等级</th><th>可检查的能力</th></tr></thead><tbody><tr><td>L0 Chat 完成任务</td><td>单次对话内完成，结果可核对</td></tr><tr><td>L1 Instruction Skill</td><td>清晰指令在新 Chat 中复用</td></tr><tr><td>L2 Structured Skill</td><td>结构化输入输出、参数和执行流程</td></tr><tr><td>L3 Verified Skill</td><td>结果验证、识别错误并正确停止</td></tr><tr><td>L4 Team-ready Skill</td><td>团队复用，文档、监控和持续优化</td></tr></tbody></table><p>简单文案不需要为追求等级增加脚本或空目录。按任务类型验证实际结果，目录存在不代表能力成立。</p></section>
-<section id="directories"><h2>按需要增加目录与检查</h2><p>SKILL.md 是入口；业务口径留在 references/，确定性实现放 scripts/。tests/ 可放程序用例，evals/ 可放 Agent 的新 Chat 场景。第 6 页的 inspect.py、transform.py、validate.py 是职责示例；本包将三阶段合并在 pipeline.py。简单 Skill 可以只保留入口文件。</p><p>更改规则或实现后重跑代表用例。遇到偶发失败时重复同一场景，保留次数、环境和每次结果；尚未实测的可靠性、效率或成本不写成改进百分比。</p></section>
-<section><h2>常见问题</h2><details><summary>一定要会 Python 吗？</summary><p>不需要。你确认业务口径、最初预期和异常情况，让 AI 或技术同事保存关键处理与比对入口，再一起核验。</p></details><details><summary>新 Chat 找不到 Skill？</summary><p>先确认安装并手动选择。手动执行成功但自然语言找不到，检查 description 的任务与触发说明，分别记录发现和执行问题。</p></details><details><summary>能减少人工检查吗？</summary><p>固定口径的字段与文件可以自动比对。规则判断、最初正确预期和新场景仍需人确认；写作等主观任务使用明确评审标准与代表样例。</p></details><details><summary>可以直接用真实客户数据吗？</summary><p>沿用项目原有的数据权限和处理约定。虚构教程可以公开分享，不能据此推断业务输入可以上传。</p></details></section>
-<section id="feedback"><h2>问题反馈</h2><p>联系张坚、李琦，并附脱敏输入、预期与实际、失败截图和校验记录。</p><details class="prompt"><summary>复制反馈模板</summary><pre id="feedback-prompt">问题反馈给张坚、李琦
+  --out ../ticket-first-run</pre><p>生成 <code>report.json</code>、<code>report.txt</code> 和 <code>evidence.json</code>。核对独立预期，平均耗时应为 65 分钟。直接跑脚本不需要安装 Skill；这项检查只说明脚本本次执行情况。</p></details>
+</section>
+<section id="regression">
+<h2>修改后，批量重跑已知案例</h2>
+<p>在完整参考包根目录运行下列命令，输出使用包外的新目录。它检查参考脚本，不会自动检查自己创建的 Skill。</p>
+<pre>python3 check-regression.py --out ../ticket-regression-first</pre>
+<table><thead><tr><th scope="col">场景</th><th scope="col">输入</th><th scope="col">应看到什么</th></tr></thead><tbody><tr><td>正常</td><td>normal.json，10 月 10 日</td><td>5 单；完成 3、待处理 2；平均 65 分钟</td></tr><tr><td>变化</td><td>changed.json，10 月 11 日</td><td>1 单完成；平均 30 分钟</td></tr><tr><td>应停止</td><td>missing-field.json</td><td>说明缺字段；非零退出；没有成功目录</td></tr><tr><td>应停止</td><td>conflicting-id.json</td><td>说明同一 ID 内容冲突；非零退出；没有成功目录</td></tr></tbody></table>
+<p>打开输出中的 <code>regression.json</code>，查看每案预期、实际和差异。PASS 表示符合本案预期；FAIL 表示不符合；UNKNOWN 表示未测或无法判断。四案通过只覆盖这组脚本案例，Qoder 的发现、调用和停止行为仍需在新 Chat 中验证。</p>
+<details class="prompt"><summary>复制：为自己的 Skill 准备检查计划</summary><pre id="regression-plan">请为这个 Skill 准备回归验证计划。先只读其入口、规则、实现和已有用例，按任务类型列出正常、可处理变化、应停止异常三类代表场景。每案写明输入、独立预期或评审标准、依据、运行方式、输出位置与通过条件。已有可信预期可引用；缺失时标待确认，不能直接把当前 Skill 输出当标准。数据任务安排关键字段比对，写作分析安排来源和代表样例评审，流程任务安排分支与停止核对。分开记录固定脚本结果与 Agent 实际发现、调用和停止行为；未运行部分为 UNKNOWN。本次只准备计划，不运行、修改或安装任何内容。</pre><button type="button" data-copy="regression-plan">复制提示词</button><span class="copy-status" aria-live="polite"></span></details>
+</section>
+<section id="repair-demo">
+<h2>为什么还要用独立预期核对</h2>
+<p>参考包中的受控教学副本曾把平均耗时除以全部 5 单，得到 39 分钟；内部数量检查仍通过。独立预期为 195 ÷ 3 = 65 分钟，批量检查因此报告 FAIL。修正分母后，四案重跑通过。</p>
+<p>原记录在 <code>example-results/before-fix.json</code> 与 <code>after-fix.json</code>。正式参考 Skill 没有注入错误，预期文件也没有为迎合输出而修改。</p>
+<p>遇到错误，修复规则或实现，再用新目录重跑。保留失败记录；业务规则改变时，先确认新口径，再更新预期。</p>
+</section>
+<section id="migration">
+<h2>准备分享时，换一位同事再试</h2>
+<p>带上完整 Skill、输入样例和独立预期，让同事安装同一版本，在全新 Chat 中重复正常、变化和异常案例。记录产品版本、是否找到 Skill、实际脚本、输出位置及差异。另一台机器没跑过，就保持待验证。</p>
+<details><summary>不同产品的技能目录</summary><p>QoderWork 使用 <code>~/.qoderwork/skills/</code>；Qoder CLI 用户级为 <code>~/.qoder/skills/</code>，项目级为 <code>.qoder/skills/</code>。按当前产品指南安装，分别核对加载和运行结果。</p><p><a href="https://docs.qoder.com/zh/qoderwork/skills" target="_blank" rel="noopener">QoderWork 指南</a> · <a href="https://docs.qoder.com/zh/cli/Skills" target="_blank" rel="noopener">CLI 指南</a></p></details>
+</section>
+<section id="validation-scope">
+<h2>几种检查各回答什么问题</h2>
+<ul><li>本次结果核对：这份日报有没有按确认的口径算对？</li><li>修改后重跑案例：已知输入和异常是否仍能正确处理？</li><li>Agent Evals：新 Chat 能否找到 Skill、实际调用保存的方法，并在该停的时候停止？</li></ul>
+<p>一次成功只证明已检查的范围。当前参考包有固定脚本教学运行记录，同事实际使用 Qoder、换机和网络组合的表现仍需各自验证。</p>
+<p>已有 Skill 后，可以用<a href="self-review.html">只读自评提示词</a>定位缺口。自评阅读文件并给出建议，实际运行记录才说明执行过什么。</p>
+</section>
+<section id="directories">
+<h2>文件和目录按需要增加</h2>
+<p><code>SKILL.md</code> 留使用说明；<code>references/</code> 放详细规则；<code>scripts/</code> 放处理代码。简单文案 Skill 可以只有入口文件。课件第 6 页的三个脚本名表示职责，参考包用 <code>pipeline.py</code> 合并检查、处理和校验。</p>
+<p>更复杂时，<code>tests/</code> 可以放程序用例，<code>evals/</code> 可以放 Agent 的新 Chat 场景。按实际任务增加，目录数量不能代替结果验证。</p>
+</section>
+<section id="maturity">
+<h2>教学成熟度 L0–L4</h2>
+<p>用于团队讨论的参考模型，属于工程建议。</p>
+<table><thead><tr><th scope="col">等级</th><th scope="col">可检查的能力</th></tr></thead><tbody><tr><td>L0 Chat 完成任务</td><td>单次对话完成，结果可核对</td></tr><tr><td>L1 Instruction Skill</td><td>保存的指令能在新 Chat 中复用</td></tr><tr><td>L2 Structured Skill</td><td>输入、输出、参数与流程明确</td></tr><tr><td>L3 Verified Skill</td><td>结果可验证，错误时正确停止</td></tr><tr><td>L4 Team-ready Skill</td><td>同事能复用，并持续记录和改进</td></tr></tbody></table>
+</section>
+<section id="feedback">
+<h2>跟练遇到问题</h2>
+<p>联系张坚、李琦，说明卡在第几步，附脱敏输入、预期与实际、出错截图和结果记录。真实客户数据继续遵守原项目权限和处理约定。</p>
+<details class="prompt"><summary>复制反馈模板</summary><pre id="feedback-prompt">问题反馈给张坚、李琦
 使用的 Skill 和版本：
 期望得到什么：
 实际发生什么：
 使用的产品和版本：
 附件：脱敏输入样例、出错截图、校验记录
-请先移除客户信息、账号和密钥。</pre><button type="button" data-copy="feedback-prompt">复制提示词</button><span class="copy-status" aria-live="polite"></span></details></section>
-<section><h2>依据与边界</h2><ul><li><a href="https://agentskills.io/specification" target="_blank" rel="noopener">Agent Skills 格式规范</a></li><li><a href="https://docs.qoder.com/zh/qoder/skills" target="_blank" rel="noopener">Qoder 技能：导入、使用与排查</a></li><li><a href="https://docs.qoder.com/zh/qoderwork/skills" target="_blank" rel="noopener">QoderWork 技能</a></li><li><a href="https://docs.qoder.com/zh/cli/Skills" target="_blank" rel="noopener">Qoder CLI 技能</a></li><li><a href="https://agentskills.io/skill-creation/evaluating-skills" target="_blank" rel="noopener">Skill 输出评估方法</a></li></ul><p>内容更新：2026-10-12。网页讲解、PPTX 备注与讲解 PDF 共用内容源；主 PDF 保持九页图解。自评模板仍为试用版，其跨 Skill、跨平台模型行为尚未验收。</p></section>
-</main><footer class="byline">AI 经营交付效能专项组 <span>v2.2 · 2026-10-12</span></footer></body></html>
+请先移除客户信息、账号和密钥。</pre><button type="button" data-copy="feedback-prompt">复制提示词</button><span class="copy-status" aria-live="polite"></span></details>
+</section>
+<section id="sources">
+<h2>依据与内容范围</h2>
+<p><a href="https://agentskills.io/specification" target="_blank" rel="noopener">Agent Skills 格式规范</a> · <a href="https://docs.qoder.com/zh/qoder/skills" target="_blank" rel="noopener">Qoder 安装与使用指南</a> · <a href="https://agentskills.io/skill-creation/evaluating-skills" target="_blank" rel="noopener">Skill 评估方法</a></p>
+<p>本页跟练顺序修订于 2026-10-12。输入和预期沿用虚构工单案例；下载的九页课件与讲解材料沿用课程 v2.2。本页复制提示词尚未完成目标同事 Qoder 环境的实际跟练验收。</p>
+</section>
+</main>
+<footer class="byline">AI 经营交付效能专项组 <span>四步跟练 · 2026-10-12</span></footer>
+</body>
+</html>

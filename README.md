@@ -43,7 +43,13 @@ npm run package
 
 将生成的 `build/cloudflare-pages.zip` 上传到现有 Cloudflare Pages 项目 `skill-engineering-guide`，选择 Production，然后部署。压缩包根目录就是网站根目录，原网址保持可用。
 
-当前项目使用 Direct Upload。源码已纳入 GitHub 版本管理，自动部署尚未配置。若以后接入 GitHub Actions，可按 [Cloudflare 官方文档](https://developers.cloudflare.com/pages/how-to/use-direct-upload-with-continuous-integration/) 将 `dist/` 上传到现有项目；需要单独配置 Cloudflare 发布凭据。
+现有 Pages 项目继续使用 Direct Upload，自动发布由 `.github/workflows/pages-deployment.yml` 完成：推送到 GitHub 的 `main` 分支后，构建网页和练习下载，检查页面链接、自评工具与参考脚本回归，再上传到同一个 `skill-engineering-guide` 项目。检查失败会停止发布。也可在 GitHub Actions 中手动运行工作流；只允许 `main` 发布生产版本。
+
+发布前需要在本仓库的 Actions secrets 中配置 `CLOUDFLARE_ACCOUNT_ID` 和 `CLOUDFLARE_API_TOKEN`。Token 使用本项目所属账户的 Cloudflare Pages Edit 权限；不将凭据提交到源码。接入方式依据 [Cloudflare 官方文档](https://developers.cloudflare.com/pages/how-to/use-direct-upload-with-continuous-integration/)。手工上传 ZIP 保留为备用方式。
+
+自动部署构建网页与练习包，不重新生成 PPTX 和两份 PDF。修改九页核心文案时，仍需按上面的导出步骤更新并提交下载文件，再推送发布。
+
+`deep` 跟练页从未安装自己的日报 Skill 开始，顺序为普通 Chat、提炼、安装、新 Chat 验证。维护 `src/deep-template.html` 和 `src/prompts.json` 中的 `deep-*` 提示词；独立输入下载从 `practice/fixtures/` 生成，现成参考 Skill 留在进阶部分。
 
 ## 练习边界
 
