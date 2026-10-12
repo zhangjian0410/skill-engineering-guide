@@ -1,0 +1,75 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {chromium} from 'playwright';
+
+const root=path.resolve(import.meta.dirname,'..');
+const data=JSON.parse(await fs.readFile(path.join(root,'src/content.json'),'utf8'));
+const out=path.resolve(root,'../evidence/course-v2-1/browser');
+await fs.mkdir(out,{recursive:true});
+const base=process.env.COURSE_TEST_URL||'http://127.0.0.1:8765/';
+const browser=await chromium.launch({headless:true});
+const results=[];
+try {
+ const page=await browser.newPage({viewport:{width:1440,height:1050}});
+ const errors=[];page.on('pageerror',error=>errors.push(error.message));
+ await page.goto(base);
+ for(let i=0;i<data.slides.length;i++){
+  if(i)await page.locator('#next').click();
+  const lesson=page.locator('.lesson.active');
+  assert.equal(await lesson.locator('.explanation p').textContent(),data.slides[i].explanation.text);
+  assert.equal(await lesson.locator('.slide h1').textContent(),data.slides[i].title);
+  assert.equal(await page.locator('#page-counter').textContent(),`${String(i+1).padStart(2,'0')} / 09`);
+  assert.equal(await page.locator('.explanation:visible').count(),1);
+  const notesBox=await lesson.locator('.explanation').boundingBox();
+  const controlsBox=await page.locator('.deck-controls').boundingBox();
+  assert.ok(notesBox.y>=controlsBox.y+controlsBox.height);
+  await page.screenshot({path:path.join(out,`desktop-${i+1}.png`),fullPage:true});
+ }
+ assert.equal(await page.locator('#next').isDisabled(),true);
+ await page.keyboard.press('ArrowLeft');
+ assert.equal(await page.locator('.slide.active').getAttribute('id'),'slide-08');
+ await page.locator('#contents-toggle').click();
+ await page.locator('#contents a[href="#slide-04"]').click();
+ await page.waitForFunction(()=>document.querySelector('.slide.active')?.id==='slide-04');
+ assert.equal(await page.locator('#contents').isVisible(),false);
+ await page.goto(base+'#slide-07');
+ assert.equal(await page.locator('.slide.active').getAttribute('id'),'slide-07');
+ await page.locator('#fullscreen').click();
+ await page.waitForFunction(()=>!!document.fullscreenElement);
+ assert.equal(await page.evaluate(()=>!!document.fullscreenElement),true);
+ assert.equal(await page.locator('.explanation:visible').count(),0);
+ await page.screenshot({path:path.join(out,'fullscreen.png')});
+ await page.evaluate(()=>document.exitFullscreen());
+ results.push('desktop: nine explanations, controls/order, keyboard, directory, hash, fullscreen PASS');
+ await page.setViewportSize({width:390,height:844});
+ await page.goto(base);
+ assert.equal(await page.locator('.slide:visible').count(),9);
+ assert.equal(await page.locator('.explanation:visible').count(),9);
+ for(let i=0;i<9;i++){
+  const lesson=page.locator('.lesson').nth(i);
+  await lesson.locator('.explanation').scrollIntoViewIfNeeded();
+  assert.equal(await lesson.locator('.explanation p').textContent(),data.slides[i].explanation.text);
+  const diagram=await lesson.locator('.slide').boundingBox();
+  const notes=await lesson.locator('.explanation').boundingBox();
+  assert.ok(notes.y>=diagram.y+diagram.height-1);
+ }
+ await page.goto(base+'#slide-08');
+ await page.waitForFunction(()=>document.querySelector('.slide.active')?.id==='slide-08');
+ await page.screenshot({path:path.join(out,'mobile-8.png'),fullPage:false});
+ assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ await page.goto(base+'deep.html#regression');
+ assert.ok(await page.locator('#regression').isVisible());
+ assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ await page.screenshot({path:path.join(out,'mobile-deep.png')});
+ assert.deepEqual(errors,[]);
+ results.push('mobile: all nine explanations follow their diagrams; hash and deep reading PASS');
+ const nojs=await browser.newPage({javaScriptEnabled:false,viewport:{width:1440,height:1000}});
+ await nojs.goto(base);
+ assert.equal(await nojs.locator('.slide:visible').count(),9);
+ assert.equal(await nojs.locator('.explanation:visible').count(),9);
+ assert.equal(await nojs.locator('.deck-controls').isVisible(),false);
+ results.push('without JavaScript: nine diagrams and explanations readable PASS');
+ await fs.writeFile(path.join(out,'checks.json'),JSON.stringify({base,results,errors},null,2));
+ console.log(results.join('\n'));
+} finally {await browser.close();}

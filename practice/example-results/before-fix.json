@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "course_version": "2.1",
+  "started_at_utc": "2026-10-12T08:31:37.506606+00:00",
+  "scope": "Fixed-script results and stopping; Agent discovery and migration UNKNOWN",
+  "python": "3.12.14",
+  "script_sha256": "3ba07a1bef0a7e08212016fcbca2a679017858d22c91c22caac8b0766f9cb16f",
+  "rules_sha256": "e4daa292dd54134eaf7a2bca65b3f1c066fa2079dc4e12c25a8795aa1dba6837",
+  "contract_sha256": "d5dc1b7ddbcc451be30dd14638f500482b088ac78fff8c0eca08bd372554c6b2",
+  "expectation_basis": "expected/README.txt and confirmed teaching business-rules.md",
+  "cases": [
+    {
+      "case": "normal",
+      "date": "2026-10-10",
+      "input_sha256": "96e9c8f7a325124226f2099b82647c74ea5a1f3476f612f73214d79ee7c97b02",
+      "verdict": "FAIL",
+      "exit_code": 0,
+      "differences": [
+        {
+          "field": "average_completed_minutes",
+          "expected": 65.0,
+          "actual": 39.0
+        }
+      ],
+      "expected": {
+        "date": "2026-10-10",
+        "total": 5,
+        "completed": 3,
+        "open": 2,
+        "completed_minutes": 195,
+        "average_completed_minutes": 65.0
+      },
+      "expected_sha256": "0f56c9d9e86c38f3c754c2d5c7b945367c070544e6a2fd99713205cc06e33f83",
+      "stdout": "{\"run_id\": \"e98d3da8-57e8-4eed-9619-cca21413adf3\", \"skill_version\": \"1.0\", \"started_at_utc\": \"2026-10-12T08:31:37.525791+00:00\", \"input_file\": \"normal.json\", \"input_sha256\": \"96e9c8f7a325124226f2099b82647c74ea5a1f3476f612f73214d79ee7c97b02\", \"script_sha256\": \"3ba07a1bef0a7e08212016fcbca2a679017858d22c91c22caac8b0766f9cb16f\", \"rules_sha256\": \"e4daa292dd54134eaf7a2bca65b3f1c066fa2079dc4e12c25a8795aa1dba6837\", \"contract_sha256\": \"d5dc1b7ddbcc451be30dd14638f500482b088ac78fff8c0eca08bd372554c6b2\", \"date\": \"2026-10-10\", \"input_count\": 7, \"duplicates_removed\": 1, \"out_of_date_removed\": 1, \"output_count\": 5, \"validation\": \"PASS\"}\n",
+      "stderr": "",
+      "actual": {
+        "date": "2026-10-10",
+        "total": 5,
+        "completed": 3,
+        "open": 2,
+        "completed_minutes": 195,
+        "average_completed_minutes": 39.0
+      },
+      "checks": {
+        "confirmed_fields_match": false,
+        "validation_pass": true,
+        "text_report_present": true,
+        "input_bound": true,
+        "script_bound": true
+      }
+    },
+    {
+      "case": "changed",
+      "date": "2026-10-11",
+      "input_sha256": "35990320e5fe4cb6550fa46be6b00049f91bd9789652af3ba1a1531ec00c3bc5",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "differences": [],
+      "expected": {
+        "date": "2026-10-11",
+        "total": 1,
+        "completed": 1,
+        "open": 0,
+        "completed_minutes": 30,
+        "average_completed_minutes": 30.0
+      },
+      "expected_sha256": "a2a6424c01755e108c3f359aea82a37cc8e12c88ca1f83321bd2242a9547404b",
+      "stdout": "{\"run_id\": \"bcc708e1-634d-4c09-b661-a8e0a8378efa\", \"skill_version\": \"1.0\", \"started_at_utc\": \"2026-10-12T08:31:37.552306+00:00\", \"input_file\": \"changed.json\", \"input_sha256\": \"35990320e5fe4cb6550fa46be6b00049f91bd9789652af3ba1a1531ec00c3bc5\", \"script_sha256\": \"3ba07a1bef0a7e08212016fcbca2a679017858d22c91c22caac8b0766f9cb16f\", \"rules_sha256\": \"e4daa292dd54134eaf7a2bca65b3f1c066fa2079dc4e12c25a8795aa1dba6837\", \"contract_sha256\": \"d5dc1b7ddbcc451be30dd14638f500482b088ac78fff8c0eca08bd372554c6b2\", \"date\": \"2026-10-11\", \"input_count\": 6, \"duplicates_removed\": 0, \"out_of_date_removed\": 5, \"output_count\": 1, \"validation\": \"PASS\"}\n",
+      "stderr": "",
+      "actual": {
+        "date": "2026-10-11",
+        "total": 1,
+        "completed": 1,
+        "open": 0,
+        "completed_minutes": 30,
+        "average_completed_minutes": 30.0
+      },
+      "checks": {
+        "confirmed_fields_match": true,
+        "validation_pass": true,
+        "text_report_present": true,
+        "input_bound": true,
+        "script_bound": true
+      }
+    },
+    {
+      "case": "missing-field",
+      "date": "2026-10-10",
+      "input_sha256": "1d922c701eb1661ab96aeb8871ff9c78efd348291b2bdf487c59d52e75ce1123",
+      "verdict": "PASS",
+      "exit_code": 1,
+      "differences": [],
+      "expected": {
+        "exit_code": "nonzero",
+        "reason_contains": "缺字段",
+        "success_directory_exists": false
+      },
+      "stdout": "",
+      "stderr": "STOP: 第 1 行缺字段：minutes\n",
+      "checks": {
+        "nonzero_exit": true,
+        "explicit_reason": true,
+        "no_success_directory": true
+      }
+    },
+    {
+      "case": "conflicting-id",
+      "date": "2026-10-10",
+      "input_sha256": "fc6d7f336b1dc78b4778adc444c6ba541d04fb13ee66a8c32293cc96f12da255",
+      "verdict": "PASS",
+      "exit_code": 1,
+      "differences": [],
+      "expected": {
+        "exit_code": "nonzero",
+        "reason_contains": "重复 ID 内容冲突",
+        "success_directory_exists": false
+      },
+      "stdout": "",
+      "stderr": "STOP: 第 2 行存在重复 ID 内容冲突\n",
+      "checks": {
+        "nonzero_exit": true,
+        "explicit_reason": true,
+        "no_success_directory": true
+      }
+    }
+  ],
+  "verdict": "FAIL"
+}

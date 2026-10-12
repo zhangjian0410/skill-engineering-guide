@@ -7,7 +7,7 @@ function hashIndex(){const n=Number(location.hash.replace('#slide-',''));return 
 function show(n,scroll=false){
  if(!slides.length)return;
  index=Math.max(0,Math.min(slides.length-1,n));
- slides.forEach((s,i)=>s.classList.toggle('active',i===index));
+ slides.forEach((s,i)=>{s.classList.toggle('active',i===index);s.closest('.lesson').classList.toggle('active',i===index);});
  document.getElementById('page-counter').textContent=`${String(index+1).padStart(2,'0')} / 09`;
  document.getElementById('prev').disabled=index===0;
  document.getElementById('next').disabled=index===slides.length-1;

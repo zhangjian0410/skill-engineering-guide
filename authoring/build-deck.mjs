@@ -79,7 +79,7 @@ for(const [i,s] of data.slides.entries()){
   panel(slide,'feedback-panel','问题反馈',689,256,543,311);text(slide,'feedback-title',s.feedback_title,711,324,499,90,34,C.navy,true);s.feedback_items.forEach((value,j)=>text(slide,`feedback-item-${j}`,value,711,436+j*35,499,31,23,C.blue));
  }
  footer(slide,s,i);
- slide.speakerNotes.text=`来源与对应：${s.source}\n本课件依据原分享对话和原图片，用户要求保留知识主线与视觉。参考： https://agentskills.io/specification https://docs.qoder.com/zh/qoder/skills https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices \n\n${s.kind==='package'?'目录中的脚本是职责示例。真实下载练习按三阶段 pipeline.py 执行，未安装或验证目标同事的 Qoder。':''}`;
+ slide.speakerNotes.text=`本页说明：${s.explanation.text}\n\n继续阅读：deep.html#${s.explanation.deepAnchor}\n\n来源与对应：${s.source}\n本课件依据原分享对话和原图片，用户要求保留知识主线与视觉。参考： https://agentskills.io/specification https://docs.qoder.com/zh/qoder/skills https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices \n\n${s.kind==='package'?'目录中的脚本是职责示例。真实下载练习按三阶段 pipeline.py 执行，未安装或验证目标同事的 Qoder。':''}`;
 }
 await fs.mkdir(path.join(root,'build/slides'),{recursive:true});
 for(const [i,slide] of p.slides.items.entries()){

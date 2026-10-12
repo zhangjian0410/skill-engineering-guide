@@ -1,4 +1,4 @@
-工单日报练习包 v1.0
+工单日报练习包 v2.1（Skill 本身 v1.0）
 AI 经营交付效能专项组
 
 全部数据为教学虚构数据。Python 3.9+，不需要第三方依赖。
@@ -31,6 +31,13 @@ AI 经营交付效能专项组
 6. 手动选择成功后，再试自然语言“用这份工单明细生成创建日期为 2026-10-10 的日报”。
    检查是否找到本 Skill，实际调用什么脚本，是否核验结果。
    最后让另一位同事安装同版本再试。程序测试通过不能代替这一步。
+
+7. 批量重跑固定脚本：
+   python3 check-regression.py --out ../ticket-regression-first
+   使用包外的新目录。查看 regression.json 中的独立预期、实际差异与退出码。
+   example-results/before-fix.json 为受控错误副本的真实 FAIL，after-fix.json 为修复后的四案 PASS。
+   expected/README.txt 记录确认依据；不能把当前输出自动当作正确标准。
+   固定脚本回归不证明 Agent 发现、调用或另一台机器通过；未测环境保持 UNKNOWN。
 
 验证记录（自行填写）：
 产品与版本：

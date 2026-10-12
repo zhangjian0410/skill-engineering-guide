@@ -8,8 +8,8 @@
 
 ## 内容与文件
 
-- `dist/`：可直接发布的网站，包含原海报、可编辑 PPTX、九页 PDF 和虚构数据练习包。
-- `src/content.json`：九页核心文案。`style.css` 与 `app.js` 控制网页视觉与阅读行为。
+- `dist/`：可直接发布的网站，包含原海报、可编辑 PPTX、九页 PDF、同源讲解 PDF 和虚构数据练习包。
+- `src/content.json`：九页核心文案与 explanation 讲解源。`style.css` 与 `app.js` 控制网页视觉与阅读行为。
 - `src/prompts.json`：可复制的创建、实践和反馈提示词。`deep-template.html` 是深入阅读的模板。
 - `references/`：原海报、六张原知识课件和最后九页结构摘录。原五期培训安排已按要求排除。
 - `authoring/`：PPTX 和 PDF 的生成源码。
@@ -33,7 +33,7 @@ python3 -m http.server 8765 --directory dist
 
 修改核心文案时，同步重新导出 PPTX/PDF，并逐页检查后更新 `dist/downloads/`。PDF 使用审阅后的九张幻灯片渲染图，PPTX 中的核心文字、表格和图解可编辑。
 
-PPTX 生成使用 Codex 提供的 `@oai/artifact-tool`、Presentations skill 验证工具和选定字体。请在该运行环境中配置 `PRESENTATIONS_SKILL_DIR`、`PYTHON_EXECUTABLE`、`RUNTIME_NODE_MODULES` 及按需配置 `SLIDE_FONT`，然后运行 `node authoring/build-deck.mjs`。最终文件与验证回执默认以新的版本文件名写入 `build/`，不会覆盖发布版；检查后再复制到下载目录。PDF 导出需要 `reportlab`，运行 `python3 authoring/build-pdf.py`。
+PPTX 生成使用 Codex 提供的 `@oai/artifact-tool`、Presentations skill 验证工具和选定字体。请在该运行环境中配置 `PRESENTATIONS_SKILL_DIR`、`PYTHON_EXECUTABLE`、`RUNTIME_NODE_MODULES` 及按需配置 `SLIDE_FONT`，然后运行 `node authoring/build-deck.mjs`。最终文件与验证回执默认以新的版本文件名写入 `build/`，不会覆盖发布版；检查后再复制到下载目录。PDF 导出需要 `reportlab` 和可嵌入的 CJK 字体，运行 `python3 authoring/build-pdf.py`，同时生成九页图解 PDF 与九页讲解手册。可用 `PDF_CJK_FONT` 配置字体路径。
 
 ## 发布
 
@@ -48,3 +48,13 @@ npm run package
 ## 练习边界
 
 练习采用虚构工单，不含客户业务数据。目录图中的 `inspect.py`、`transform.py`、`validate.py` 表示职责；练习包实际把三阶段放在 `pipeline.py`。正常数据、换日期和应停止的异常都有样例。尚未在每位同事的 Qoder 环境完成导入验证；实际操作入口按当前产品版本核对。
+
+## v2.1 讲解与回归实践
+
+桌面说明在翻页区后随页切换；手机逐页附说明；无 JS 按顺序阅读。全屏隐藏讲解，以图解为主。PPTX speaker notes 和讲解 PDF 读取同一 explanation 字段。
+
+`npm run build` 同时生成网页、完整练习 ZIP 和可导入 Skill ZIP。包只包含指定源码目录，排除本地输出与缓存。自评模板仍为只读试用版，版本独立于课程。
+
+在解压练习包根目录运行 `python3 check-regression.py --out ../ticket-regression-first`。检查器核对独立 expected 和异常停止；`example-results/` 保留受控副本的真实失败与修复记录。它不证明 Agent 行为或跨机通过。
+
+实现检查：`python3 tests/regression-checker.py`、`node --test tests/self-review.test.mjs`。启动本地预览后，`node tests/course-browser.mjs` 检查桌面、手机、无 JS 和全屏。浏览器检查需要 Playwright；它仅是作者验证依赖，不是学员练习依赖。
