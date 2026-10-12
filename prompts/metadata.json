@@ -1,0 +1,8 @@
+{
+  "title": "Skill Engineering 通用自评提示词",
+  "version": "0.1.0-preview.1",
+  "status": "试用版",
+  "updated": "2026-10-12",
+  "source": "skill-self-review.txt",
+  "runtimeAcceptance": "UNKNOWN"
+}

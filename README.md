@@ -14,6 +14,7 @@
 - `references/`：原海报、六张原知识课件和最后九页结构摘录。原五期培训安排已按要求排除。
 - `authoring/`：PPTX 和 PDF 的生成源码。
 - `practice/`：下载练习包的源码和虚构工单数据。
+- `prompts/`：通用只读 Skill 自评模板的唯一维护源、版本和合成回归场景。网页及下载文件由构建脚本生成，当前标为试用版。
 
 ## 修改与本地预览
 
@@ -25,6 +26,10 @@ python3 -m http.server 8765 --directory dist
 ```
 
 浏览器打开 `http://localhost:8765/`。电脑可以翻页、按左右箭头和 F；手机连续阅读九页。
+
+[自评提示词页面](https://skill-engineering-guide.pages.dev/self-review.html)只需填写 Skill 名称。默认基础筛查，结束后询问是否继续深度；也可直接选择深度。它支持数据处理、写作与分析、流程与工具调用，模型执行的跨平台验收仍未完成。
+
+修改自评提示词时编辑 `prompts/skill-self-review.txt`，版本在 `prompts/metadata.json`，然后运行 `npm run build`。不要直接维护 `dist/self-review.html` 或下载副本。运行 `node --test tests/self-review.test.mjs` 可核对网站复制、下载与单一来源契约；这不代替真实工具中的提示词行为评估。
 
 修改核心文案时，同步重新导出 PPTX/PDF，并逐页检查后更新 `dist/downloads/`。PDF 使用审阅后的九张幻灯片渲染图，PPTX 中的核心文字、表格和图解可编辑。
 
