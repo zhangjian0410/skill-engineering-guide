@@ -47,9 +47,17 @@ try {
  await page.locator('#fullscreen').click();
  await page.waitForFunction(()=>!!document.fullscreenElement);
  assert.equal(await page.evaluate(()=>!!document.fullscreenElement),true);
- assert.equal(await page.locator('.explanation:visible').count(),0);
+ assert.equal(await page.locator('.explanation:visible').count(),1);
+ assert.equal(await page.locator('.lesson.active .explanation p').textContent(),data.slides[6].explanation.text);
+ await page.locator('.lesson.active .explanation').scrollIntoViewIfNeeded();
  await page.screenshot({path:path.join(out,'fullscreen.png')});
+ await page.keyboard.press('ArrowRight');
+ assert.equal(await page.locator('.explanation:visible').count(),1);
+ assert.equal(await page.locator('.lesson.active .explanation p').textContent(),data.slides[7].explanation.text);
+ await page.locator('.lesson.active .explanation').scrollIntoViewIfNeeded();
+ await page.screenshot({path:path.join(out,'fullscreen-next-page.png')});
  await page.evaluate(()=>document.exitFullscreen());
+ assert.equal(await page.locator('.explanation:visible').count(),1);
  results.push('desktop: nine explanations, controls/order, keyboard, directory, hash, fullscreen PASS');
  await page.setViewportSize({width:390,height:844});
  await page.goto(base);
