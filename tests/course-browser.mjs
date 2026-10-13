@@ -23,12 +23,19 @@ try {
  assert.ok(await page.locator('#slide-02 .sample-output').textContent().then(text=>text.includes('65 分钟')));
  results.push('case example: complete seven fixture rows and explicit AI task/report visible PASS');
  await page.goto(base);
+ assert.equal(await page.locator('.slide.active').getAttribute('id'),data.cover.id);
+ await page.waitForFunction(()=>{const img=document.querySelector('.cover-poster');return img.complete&&img.naturalWidth===1122&&img.naturalHeight===1402;});
+ assert.equal(await page.locator('#page-counter').textContent(),'01 / 10');
+ assert.equal(await page.locator('.cover-resources a[download]').getAttribute('href'),data.cover.image);
+ assert.equal(await page.locator('.reactions a').count(),0);
+ await page.screenshot({path:path.join(out,'desktop-cover.png'),fullPage:true});
+ await page.locator('#next').click();
  for(let i=0;i<data.slides.length;i++){
   if(i)await page.locator('#next').click();
   const lesson=page.locator('.lesson.active');
   assert.equal(await lesson.locator('.explanation p').textContent(),data.slides[i].explanation.text);
   assert.equal(await lesson.locator('.slide h1').textContent(),data.slides[i].title);
-  assert.equal(await page.locator('#page-counter').textContent(),`${String(i+1).padStart(2,'0')} / 09`);
+  assert.equal(await page.locator('#page-counter').textContent(),`${String(i+2).padStart(2,'0')} / 10`);
   assert.equal(await page.locator('.explanation:visible').count(),1);
   const notesBox=await lesson.locator('.explanation').boundingBox();
   const controlsBox=await page.locator('.deck-controls').boundingBox();
@@ -58,13 +65,13 @@ try {
  await page.screenshot({path:path.join(out,'fullscreen-next-page.png')});
  await page.evaluate(()=>document.exitFullscreen());
  assert.equal(await page.locator('.explanation:visible').count(),1);
- results.push('desktop: nine explanations, controls/order, keyboard, directory, hash, fullscreen PASS');
+ results.push('desktop: cover and nine explanations, controls/order, keyboard, directory, hash, fullscreen PASS');
  await page.setViewportSize({width:390,height:844});
  await page.goto(base);
- assert.equal(await page.locator('.slide:visible').count(),9);
- assert.equal(await page.locator('.explanation:visible').count(),9);
+ assert.equal(await page.locator('.slide:visible').count(),10);
+ assert.equal(await page.locator('.explanation:visible').count(),10);
  for(let i=0;i<9;i++){
-  const lesson=page.locator('.lesson').nth(i);
+  const lesson=page.locator('.lesson').nth(i+1);
   await lesson.locator('.explanation').scrollIntoViewIfNeeded();
   assert.equal(await lesson.locator('.explanation p').textContent(),data.slides[i].explanation.text);
   const diagram=await lesson.locator('.slide').boundingBox();
@@ -74,7 +81,7 @@ try {
  await page.goto(base+'#slide-02');
  await page.locator('#slide-02 .sample-table').scrollIntoViewIfNeeded();
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
- await page.locator('.lesson').nth(1).screenshot({path:path.join(out,'mobile-case.png')});
+ await page.locator('.lesson').nth(2).screenshot({path:path.join(out,'mobile-case.png')});
  await page.goto(base+'#slide-08');
  await page.waitForFunction(()=>document.querySelector('.slide.active')?.id==='slide-08');
  await page.screenshot({path:path.join(out,'mobile-8.png'),fullPage:false});
@@ -84,13 +91,13 @@ try {
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  await page.screenshot({path:path.join(out,'mobile-deep.png')});
  assert.deepEqual(errors,[]);
- results.push('mobile: all nine explanations follow their diagrams; hash and deep reading PASS');
+ results.push('mobile: all cover and nine explanations follow their diagrams; hash and deep reading PASS');
  const nojs=await browser.newPage({javaScriptEnabled:false,viewport:{width:1440,height:1000}});
  await nojs.goto(base);
- assert.equal(await nojs.locator('.slide:visible').count(),9);
- assert.equal(await nojs.locator('.explanation:visible').count(),9);
+ assert.equal(await nojs.locator('.slide:visible').count(),10);
+ assert.equal(await nojs.locator('.explanation:visible').count(),10);
  assert.equal(await nojs.locator('.deck-controls').isVisible(),false);
- results.push('without JavaScript: nine diagrams and explanations readable PASS');
+ results.push('without JavaScript: cover and nine diagrams and explanations readable PASS');
  await fs.writeFile(path.join(out,'checks.json'),JSON.stringify({base,results,errors},null,2));
  console.log(results.join('\n'));
 } finally {await browser.close();}

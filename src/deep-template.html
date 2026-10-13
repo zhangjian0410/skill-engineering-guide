@@ -92,7 +92,7 @@
 </section>
 <section id="workflow-and-code">
 <h2>处理方法：步骤、AI 推理与固定代码</h2>
-<p>对应课件第 4、5 页。Workflow 安排任务怎样推进，Data Processing 负责数据处理；两个层次都可以使用 AI 和代码。</p>
+<p>对应课件第 5、6 页。Workflow 安排任务怎样推进，Data Processing 负责数据处理；两个层次都可以使用 AI 和代码。</p>
 <table><thead><tr><th scope="col">层次</th><th scope="col">日报中做什么</th><th scope="col">怎样分工</th></tr></thead><tbody><tr><th scope="row">工作流</th><td>确认日期和口径，检查输入，处理后核验，再交付</td><td>AI 理解需求和解释异常；入口与代码固定必经检查，错误时停止</td></tr><tr><th scope="row">数据处理</th><td>去重、日期筛选、数量与平均耗时计算</td><td>AI 协助理解字段；按已确认规则运行固定代码，避免每次重新推算</td></tr></tbody></table>
 <p>例如同一 ID 的耗时出现 60 和 90，固定检查应报告冲突；AI 解释差异，等业务确认后再处理。字段名或口径改变也要先确认，参考脚本会拒绝不符合契约的输入。用了固定代码仍要核对可信答案，后面的程序回归检查用于发现代码本身的错误。</p>
 </section>
@@ -106,7 +106,7 @@
 </section>
 <section id="directories">
 <h2>统一目录：tests 放程序测试，evals 放 AI 任务场景</h2>
-<p>对应课件第 6 页，下面展示实际参考包。<code>SKILL.md</code> 留使用说明；<code>references/</code> 放详细规则；<code>scripts/pipeline.py</code> 合并检查、处理和校验。简单任务可以只有入口文件，模板等资源按需放 <code>assets/</code>。</p>
+<p>对应课件第 7 页，下面展示实际参考包。<code>SKILL.md</code> 留使用说明；<code>references/</code> 放详细规则；<code>scripts/pipeline.py</code> 合并检查、处理和校验。简单任务可以只有入口文件，模板等资源按需放 <code>assets/</code>。</p>
 <p>参考包与课件使用同一套目录。<code>tests/</code> 放程序检查、输入样例和已确认答案；<code>evals/</code> 放让 AI 完成的任务与判定标准，直接复用 tests 中的样例和答案。</p>
 <pre>ticket-daily-report/
 ├── SKILL.md
@@ -133,7 +133,7 @@
 </section>
 <section id="verification-prep">
 <h2>为自己的 Skill 准备验证：先计划，再生成文件</h2>
-<p>对应课件第 9 页。已有 Skill 时，可先用<a href="self-review.html">只读自评</a>定位缺口。自评给出问题与建议；下面的检查计划确定怎样验证。两者都不会直接生成 tests、evals 或运行任务。</p>
+<p>对应课件第 10 页。已有 Skill 时，可先用<a href="self-review.html">只读自评</a>定位缺口。自评给出问题与建议；下面的检查计划确定怎样验证。两者都不会直接生成 tests、evals 或运行任务。</p>
 <h3>1. 先确认检查什么</h3>
 <p>先准备自己的完整 Skill、输入样例和已经确认的答案或评审标准，让同一个 Chat 能读到这些材料。工单练习可借用参考包的 tests/fixtures 和 tests/expected，但自己的脚本名称、参数与输出格式以实际实现为准。使用下面的请求，应该得到一张场景表：正常、可处理变化、应停止异常，每案有输入、标准及依据、运行方式和通过条件。例如日报正常案确认平均 65，缺字段案确认停止。逐案核对计划，纠正后再确认；没有可靠依据的标准标为待确认。</p>
 <p>若 AI 找不到文件，补充 Skill 和材料文件夹的完整路径，确认它能读取后再继续。</p>
@@ -215,7 +215,7 @@
 <section id="sources">
 <h2>依据与内容范围</h2>
 <p><a href="https://agentskills.io/specification" target="_blank" rel="noopener">Agent Skills 格式规范</a> · <a href="https://docs.qoder.com/zh/qoder/skills" target="_blank" rel="noopener">Qoder 安装与使用指南</a> · <a href="https://agentskills.io/skill-creation/evaluating-skills" target="_blank" rel="noopener">Skill 任务评估方法</a> · <a href="https://agentskills.io/skill-creation/optimizing-descriptions" target="_blank" rel="noopener">Skill 触发评估方法</a> · <a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" target="_blank" rel="noopener">Agent 评估与生产观察</a></p>
-<p>本页修订于 {{DATE}}。输入和预期沿用虚构工单案例；下载的九页课件与讲解材料沿用课程 v{{VERSION}}。</p>
+<p>本页修订于 {{DATE}}。输入和预期沿用虚构工单案例；下载的十页课件（含海报封面）与讲解材料沿用课程 v{{VERSION}}。</p>
 <details><summary>2026-10-12 跟练记录（当时的较长提示词）</summary>
 <p>环境：2026-10-12，macOS，Qoder 0.4.3，通用模式。从未安装 <code>my-ticket-daily-report</code> 开始，通过界面创建任务、生成包、上传安装，再在全新 Chat 中运行。以下保留当时版本的记录；本页当前短提示词的复测见下一项。</p>
 <table><thead><tr><th scope="col">检查</th><th scope="col">实际结果</th></tr></thead><tbody><tr><td>普通 Chat</td><td>生成日报与处理代码；5 单、完成 3、待处理 2、平均 65 分钟</td></tr><tr><td>提炼与安装</td><td>生成完整 ZIP；上传后在本地 Skill 列表显示已安装</td></tr><tr><td>新 Chat：正常</td><td>调用安装目录中的脚本；平均 65 分钟，交付日报与核对记录</td></tr><tr><td>新 Chat：变化</td><td>10 月 11 日统计 1 单完成，平均 30 分钟</td></tr><tr><td>新 Chat：缺字段</td><td>指出缺少 minutes，脚本退出码为 1；没有生成成功日报</td></tr></tbody></table>

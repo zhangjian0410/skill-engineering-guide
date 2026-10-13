@@ -2,8 +2,17 @@
   "title": "Skill Engineering 自学课件",
   "subtitle": "从 Chat 使用者，到 Skill 工程实践者",
   "byline": "出品：AI 经营交付效能专项组",
-  "version": "2.6",
-  "date": "2026-10-13",
+  "version": "2.7",
+  "date": "2026-10-14",
+  "cover": {
+    "id": "slide-cover",
+    "title": "Skill Engineering 培训系列 · 海报封面",
+    "image": "downloads/poster.png",
+    "explanation": {
+      "text": "海报展示本次培训的整体框架。后面的九页正文会用工单日报解释这些概念，再到深入阅读中完成四步跟练。",
+      "deepAnchor": "practice-route"
+    }
+  },
   "formula": "Skill Engineering = Skill Design + Deterministic Execution + Validation + Evaluation + Reuse",
   "formula_terms": [
     [

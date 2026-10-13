@@ -3,18 +3,18 @@ const slides=[...document.querySelectorAll('.slide')];
 const mobile=matchMedia('(max-width:850px)');
 const contents=document.getElementById('contents');
 let index=0;
-function hashIndex(){const n=Number(location.hash.replace('#slide-',''));return Number.isInteger(n)&&n>=1&&n<=slides.length?n-1:0;}
+function hashIndex(){const n=slides.findIndex(slide=>'#'+slide.id===location.hash);return n<0?0:n;}
 function show(n,scroll=false){
  if(!slides.length)return;
  index=Math.max(0,Math.min(slides.length-1,n));
  slides.forEach((s,i)=>{s.classList.toggle('active',i===index);s.closest('.lesson').classList.toggle('active',i===index);});
- document.getElementById('page-counter').textContent=`${String(index+1).padStart(2,'0')} / 09`;
+ document.getElementById('page-counter').textContent=`${String(index+1).padStart(2,'0')} / ${String(slides.length).padStart(2,'0')}`;
  document.getElementById('prev').disabled=index===0;
  document.getElementById('first').disabled=index===0;
  document.getElementById('next').disabled=index===slides.length-1;
  if(scroll){if(mobile.matches)slides[index].scrollIntoView({block:'start'});else window.scrollTo(0,0);}
 }
-function go(n){const target=Math.max(0,Math.min(slides.length-1,n));history.replaceState(null,'',`#slide-${String(target+1).padStart(2,'0')}`);show(target,true);}
+function go(n){const target=Math.max(0,Math.min(slides.length-1,n));history.replaceState(null,'','#'+slides[target].id);show(target,true);}
 async function fullscreen(){try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{const button=document.getElementById('fullscreen');if(button)button.textContent='浏览器未允许全屏';}}
 if(slides.length){
  show(hashIndex());

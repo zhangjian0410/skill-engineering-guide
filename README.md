@@ -8,8 +8,8 @@
 
 ## 内容与文件
 
-- `dist/`：可直接发布的网站，包含原海报、可编辑 PPTX、九页 PDF、同源讲解 PDF 和虚构数据练习包。
-- `src/content.json`：九页核心文案与 explanation 讲解源。`style.css` 与 `app.js` 控制网页视觉与阅读行为。
+- `dist/`：可直接发布的网站，包含原海报、可编辑十页 PPTX、十页 PDF、同源讲解 PDF 和虚构数据练习包。
+- `src/content.json`：海报封面、九页核心文案与 explanation 讲解源。`style.css` 与 `app.js` 控制网页视觉与阅读行为。
 - `src/prompts.json`：可复制的创建、实践和反馈提示词。`deep-template.html` 是深入阅读的模板。
 - `references/`：原海报、六张原知识课件和最后九页结构摘录。原五期培训安排已按要求排除。
 - `authoring/`：PPTX 和 PDF 的生成源码。
@@ -25,15 +25,15 @@ npm run build
 python3 -m http.server 8765 --directory dist
 ```
 
-浏览器打开 `http://localhost:8765/`。电脑可以翻页、按左右箭头和 F；手机连续阅读九页。
+浏览器打开 `http://localhost:8765/`。电脑可以翻页、按左右箭头和 F；手机连续阅读海报封面与九页正文。
 
 [自评提示词页面](https://skill-engineering-guide.pages.dev/self-review.html)只需填写 Skill 名称。默认基础筛查，结束后询问是否继续深度；也可直接选择深度。它支持数据处理、写作与分析、流程与工具调用，模型执行的跨平台验收仍未完成。
 
 修改自评提示词时编辑 `prompts/skill-self-review.txt`，版本在 `prompts/metadata.json`，然后运行 `npm run build`。不要直接维护 `dist/self-review.html` 或下载副本。运行 `node --test tests/self-review.test.mjs` 可核对网站复制、下载与单一来源契约；这不代替真实工具中的提示词行为评估。
 
-修改核心文案时，同步重新导出 PPTX/PDF，并逐页检查后更新 `dist/downloads/`。PDF 使用审阅后的九张幻灯片渲染图，PPTX 中的核心文字、表格和图解可编辑。
+修改核心文案时，同步重新导出 PPTX/PDF，并逐页检查后更新 `dist/downloads/`。PDF 使用审阅后的十张幻灯片渲染图（封面加九页正文），PPTX 中的核心文字、表格和图解可编辑。
 
-PPTX 生成使用 Codex 提供的 `@oai/artifact-tool`、Presentations skill 验证工具和选定字体。请在该运行环境中配置 `PRESENTATIONS_SKILL_DIR`、`PYTHON_EXECUTABLE`、`RUNTIME_NODE_MODULES` 及按需配置 `SLIDE_FONT`，然后运行 `node authoring/build-deck.mjs`。最终文件与验证回执默认以新的版本文件名写入 `build/`，不会覆盖发布版；检查后再复制到下载目录。PDF 导出需要 `reportlab` 和可嵌入的 CJK 字体，运行 `python3 authoring/build-pdf.py`，同时生成九页图解 PDF 与九页讲解手册。可用 `PDF_CJK_FONT` 配置字体路径。
+PPTX 生成使用 Codex 提供的 `@oai/artifact-tool`、Presentations skill 验证工具和选定字体。请在该运行环境中配置 `PRESENTATIONS_SKILL_DIR`、`PYTHON_EXECUTABLE`、`RUNTIME_NODE_MODULES` 及按需配置 `SLIDE_FONT`，然后运行 `node authoring/build-deck.mjs`。最终文件与验证回执默认以新的版本文件名写入 `build/`，不会覆盖发布版；检查后再复制到下载目录。PDF 导出需要 `reportlab` 和可嵌入的 CJK 字体，运行 `python3 authoring/build-pdf.py`，同时生成十页图解 PDF 与十页讲解手册（封面加九页正文）。可用 `PDF_CJK_FONT` 配置字体路径。
 
 ## 发布与静态资料备份
 
@@ -51,19 +51,19 @@ npm run package
 
 ## 课程入口、海报与交流
 
-`courses.html` 是系列课程的统一入口，目录维护在 `src/courses.json`。当前只列真实存在的 Skill Engineering；原来的根地址仍直接打开九页课件，既有分享链接不变。新增课程时，先提供课程网页和资料，再在目录中登记学习、跟练、自评及海报地址。链接检查扫描全部已发布 HTML，包括后续课程。
+`courses.html` 是系列课程的统一入口，目录维护在 `src/courses.json`。当前只列真实存在的 Skill Engineering；原来的根地址打开含海报封面的十页课件，既有分享链接不变。新增课程时，先提供课程网页和资料，再在目录中登记学习、跟练、自评及海报地址。链接检查扫描全部已发布 HTML，包括后续课程。
 
-原版海报放在课程资料中，点击先进入 `poster.html` 在线查看。放大原图和下载 PNG 是单独的次要操作。课件导航区的“第一页”返回第 1 页，键盘 Home 同样生效；“课程首页”返回选课入口，全屏内也可使用。导航改动不改变九页正文、PPTX 或两份 PDF。
+原版海报作为新增第 1 页完整展示，后接原有九页正文；网页版、PPTX、课件 PDF 和讲解 PDF 共十页。封面保留在线放大和 PNG 下载入口，课程资料中的独立在线海报页仍可使用。课件导航区的“第一页”和键盘 Home 返回海报封面；“课程首页”返回选课入口，全屏内也可使用。目录和显示页码按十页顺序排列。原有 `#slide-01` 至 `#slide-09` 地址仍指向原正文主题，新增封面地址为 `#slide-cover`，课程入口由封面开始。深入阅读的正文页码同步加一。
 
 课件及深入阅读的交流区共用本门课的点赞、拍砖和留言。无需登录或实名，称呼和联系方式均选填；称呼与留言公开，联系方式只存入 D1，公开 API 不返回该字段。讲师可在 Cloudflare → Storage & databases → D1 → `ai-course-community` → Explore Data 查看 `comments` 表；不要把数据库查询结果或联系方式提交到 GitHub。可在同一后台删除不适当的留言。近期公开列表显示最新 30 条。
 
 互动由 `functions/api/` 和 D1 的 `COURSE_DB` 绑定提供，不依赖本地伪计数。`wrangler.jsonc` 维护生产绑定，`migrations/` 是数据库结构来源。首版结构由 Cloudflare 控制台执行；现有 Pages Write 部署 Token 权限保持不变，CI 不执行远程数据库迁移。后续结构变更先审核迁移，再由拥有 D1 权限的账户执行，不把本地测试等同于生产初始化。
 
-课程首页展示站点今日与累计 PV/UV，从启用统计起计数，日界限为 UTC+8。每次页面加载上报一次，课件翻页不增加 PV；事件编号在 7 天内避免重试重复计数。UV 按 90 天第一方匿名浏览器 Cookie 去重，换浏览器、清理 Cookie 或重新获得标识都可能增加 UV，因此不代表真实人数；未启用 JavaScript 的访问不计入。访问记录不含称呼、联系方式或原始 IP。限流只存带服务端随机盐的 IP 摘要，短期访问事件用于重试去重，历史汇总保留。匿名标识不能保证一人一票。
+课程首页顶部“访问统计”及介绍区“查看 PV / UV 访问统计”可跳到站点今日与累计 PV/UV，从启用统计起计数，日界限为 UTC+8。每次页面加载上报一次，课件翻页不增加 PV；事件编号在 7 天内避免重试重复计数。UV 按 90 天第一方匿名浏览器 Cookie 去重，换浏览器、清理 Cookie 或重新获得标识都可能增加 UV，因此不代表真实人数；未启用 JavaScript 的访问不计入。访问记录不含称呼、联系方式或原始 IP。限流只存带服务端随机盐的 IP 摘要，短期访问事件用于重试去重，历史汇总保留。匿名标识不能保证一人一票。
 
 当前账户使用 Workers Free，功能沿免费额度运行，不自动升级付费套餐；额度用尽时，互动及统计可能暂时不可用，课件静态内容仍可阅读。相关额度以 Cloudflare 当前计划为准。
 
-本地验证用固定 Wrangler 4.149.0：`node --test tests/community-api.test.mjs` 自动创建隔离本地 D1、启动测试 Worker，检查 API、隐私、去重、限流及重启持久化，结束后只停止自己创建的进程。可用 `COMMUNITY_TEST_EVIDENCE_DIR` 指定证据目录。网页验证使用 `tests/portal-browser.mjs`，只允许本机测试地址，避免把合成留言提交到公网；现有 `tests/course-browser.mjs` 继续验证讲解、全屏和九页行为。
+本地验证用固定 Wrangler 4.149.0：`node --test tests/community-api.test.mjs` 自动创建隔离本地 D1、启动测试 Worker，检查 API、隐私、去重、限流及重启持久化，结束后只停止自己创建的进程。可用 `COMMUNITY_TEST_EVIDENCE_DIR` 指定证据目录。网页验证使用 `tests/portal-browser.mjs`，只允许本机测试地址，避免把合成留言提交到公网；现有 `tests/course-browser.mjs` 继续验证封面、九页正文讲解、全屏和十页导航行为。
 
 `deep` 跟练页从未安装自己的日报 Skill 开始，顺序为普通 Chat、提炼、安装、新 Chat 验证。维护 `src/deep-template.html` 和 `src/prompts.json` 中的 `deep-*` 提示词；独立输入下载从 `practice/ticket-daily-report/tests/fixtures/` 生成，现成参考 Skill 留在进阶部分。
 
@@ -118,3 +118,7 @@ Deep 与第 9 页补齐准备材料、确认计划、生成文件、实际运行
 随后在新的 Qoder Chat 对另一个原 Skill 副本实测当前 177 字生成请求和 71 字运行请求。计划中的全量去重说明需要纠正；生成初稿也需要反馈，才补齐包内共用材料和每案产物留存。作者再补上已有目录保护、日期及全部答案字段核对，修正 eval 路径。最终 Qoder 实跑十一案全部通过，正常平均 65、变化平均 30、无完成单写不适用，异常停止；实际日报、命令和日志均保留。一次运行因先建输出目录触发保护，改用未建路径后通过，旧记录未删除。作者独立重跑、迁移整包，并验证错误平均数、退出码、格式、日期、停止前缀和错误标准均报失败。原四份输入、两份确认答案与业务脚本不变，新增无完成单标准在执行前按既有规则确认。
 
 这些结果验证生成文件和固定脚本检查，不代表十一案 Agent 任务全部完成。evals 配置引用已核对；当前仍没有自动运行 Qoder 的评估程序，也没有版本收益、跨机或生产评估结果。Deep 补充完整路径排错与生成后纠正缺口的说明；九页主文案与下载教材沿用同源 v2.6。公开参考包的原有四案检查沿用原实现，运行证据保留在本地任务目录。
+
+## v2.7 · 海报封面与入口可见性
+
+新增完整原版海报封面，移除点赞、拍砖旁的海报链接，保留在线查看和 PNG 下载；网页、PPTX 及两份 PDF 同步十页。课程首页标题取消强制换行，电脑尽量一行、手机按短语换行；介绍区增加明显的 PV/UV 入口。旧版本记录的页码按当时九页结构记载。

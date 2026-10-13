@@ -16,12 +16,13 @@ output=root/'dist/downloads/skill-engineering.pdf'
 c=canvas.Canvas(str(output),pagesize=(960,540))
 c.setTitle(f'Skill Engineering 入门自学课件 v{data["version"]}')
 c.setAuthor('AI 经营交付效能专项组')
-for i in range(1,10):
+total_pages=len(data['slides'])+1
+for i in range(1,total_pages+1):
     # Embed the exact reviewed slide render. No image editing or new drawings.
     c.drawImage(ImageReader(str(root/f'build/slides/slide-{i:02d}.png')),0,0,width=960,height=540)
     c.showPage()
 c.save()
-print(f'Wrote 9-page offline PDF: {output}')
+print(f'Wrote {total_pages}-page offline PDF: {output}')
 
 # Embed a portable CJK font; keep all explanation prose in content.json.
 font=Path(os.environ.get('PDF_CJK_FONT','/System/Library/Fonts/Supplemental/Arial Unicode.ttf'))
@@ -33,6 +34,18 @@ c.setAuthor(data['byline'])
 style=ParagraphStyle('explanation',fontName='CourseCJK',fontSize=12,leading=22,
                      textColor='#082F75',wordWrap='CJK')
 width,height=A4
+c.setFillColorRGB(.03,.18,.46)
+c.setFont('CourseCJK',11)
+c.drawString(36,height-42,f'Skill Engineering · 海报封面 · v{data["version"]}')
+poster_width=width-72
+poster_height=poster_width*1402/1122
+c.drawImage(ImageReader(str(root/'dist'/data['cover']['image'])),36,height-80-poster_height,
+            width=poster_width,height=poster_height)
+c.linkURL('https://skill-engineering-guide.pages.dev/poster',
+          (36,height-80-poster_height,width-36,height-80),relative=0)
+c.setFont('CourseCJK',10)
+c.drawString(36,45,data['byline']);c.drawRightString(width-36,45,f'01 / {total_pages:02d}')
+c.showPage()
 for i,s in enumerate(data['slides'],1):
     c.setFillColorRGB(.03,.18,.46)
     c.setFont('CourseCJK',11)
@@ -42,7 +55,7 @@ for i,s in enumerate(data['slides'],1):
     title.drawOn(c,36,height-76-h)
     image_width=width-72; image_height=image_width*9/16
     image_top=height-155
-    c.drawImage(ImageReader(str(root/f'build/slides/slide-{i:02d}.png')),36,image_top-image_height,
+    c.drawImage(ImageReader(str(root/f'build/slides/slide-{i+1:02d}.png')),36,image_top-image_height,
                 width=image_width,height=image_height)
     y=image_top-image_height-38
     c.setFont('CourseCJK',14);c.drawString(36,y,'本页讲解')
@@ -54,7 +67,7 @@ for i,s in enumerate(data['slides'],1):
     c.linkURL('https://skill-engineering-guide.pages.dev/deep.html#'+s['explanation']['deepAnchor'],
               (36,85,width-36,103),relative=0)
     c.setFillColorRGB(.32,.45,.67)
-    c.drawString(36,45,data['byline']);c.drawRightString(width-36,45,f'{i:02d} / 09')
+    c.drawString(36,45,data['byline']);c.drawRightString(width-36,45,f'{i+1:02d} / {total_pages:02d}')
     c.showPage()
 c.save()
-print(f'Wrote 9-page companion notes PDF: {notes}')
+print(f'Wrote {total_pages}-page companion notes PDF: {notes}')

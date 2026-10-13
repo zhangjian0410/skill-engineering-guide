@@ -13,6 +13,7 @@ const C={navy:'#082F75',blue:'#1669DB',cyan:'#479DF2',soft:'#EEF7FF',line:'#BCDD
 const font=process.env.SLIDE_FONT||'Heiti TC';
 const p=Presentation.create({slideSize:{width:1280,height:720}});
 const bg=await fs.readFile(path.join(root,'dist/assets/theme.png'));
+const totalPages=data.slides.length+1;
 function shape(slide,name,x,y,w,h,fill=C.soft,geometry='roundRect',stroke=C.line){return slide.shapes.add({name,geometry,position:{left:x,top:y,width:w,height:h},fill,line:{fill:stroke,width:stroke==='none'?0:1,style:'solid'},...(geometry==='roundRect'?{borderRadius:'rounded-xl'}:{})});}
 function text(slide,name,value,x,y,w,h,size=24,color=C.navy,bold=false,align='left'){
  const t=slide.shapes.add({name,geometry:'textbox',position:{left:x,top:y,width:w,height:h},fill:'none',line:{fill:'none',width:0,style:'solid'}});
@@ -31,8 +32,13 @@ function footer(slide,s,i){
  shape(slide,'lesson-conclusion',48,603,1184,66,'#F4FAFF');
  text(slide,'takeaway',s.takeaway,66,619,1148,42,23,C.navy,true);
  text(slide,'byline',data.byline,48,685,890,25,15,C.blue);
- text(slide,'page',`${String(i+1).padStart(2,'0')} / 09`,1137,685,96,25,16,C.navy,true,'right');
+ text(slide,'page',`${String(i+2).padStart(2,'0')} / ${String(totalPages).padStart(2,'0')}`,1137,685,96,25,16,C.navy,true,'right');
 }
+const cover=p.slides.add();cover.background.fill='#FFFFFF';
+const poster=await fs.readFile(path.join(root,'dist',data.cover.image));
+cover.images.add({blob:poster.buffer.slice(poster.byteOffset,poster.byteOffset+poster.byteLength),contentType:'image/png',alt:data.cover.title,fit:'contain',position:{left:352,top:0,width:576,height:720}});
+text(cover,'page',`01 / ${String(totalPages).padStart(2,'0')}`,1137,685,96,25,16,C.navy,true,'right');
+cover.speakerNotes.text=`${data.cover.explanation.text}\n\n来源：原版海报 ${data.cover.image}，保留完整画面与比例。\n在线查看：https://skill-engineering-guide.pages.dev/poster\n继续阅读：https://skill-engineering-guide.pages.dev/deep#${data.cover.explanation.deepAnchor}`;
 for(const [i,s] of data.slides.entries()){
  const slide=p.slides.add();slide.background.fill='#FFFFFF';
  slide.images.add({blob:bg.buffer.slice(bg.byteOffset,bg.byteOffset+bg.byteLength),contentType:'image/png',alt:'沿原课件的蓝白网格、AI层叠图和波浪页脚',fit:'cover',position:{left:0,top:0,width:1280,height:720}});
@@ -97,5 +103,5 @@ const candidate=path.join(root,'build/candidate.pptx');await (await Presentation
 const exportName=`skill-engineering-${Date.now()}`;
 const finalPath=path.resolve(root,process.env.FINAL_PPTX_PATH||`build/final/${exportName}.pptx`);
 await fs.mkdir(path.dirname(finalPath),{recursive:true});
-const result=await finalizePresentation({workspaceDir:root,candidatePath:candidate,finalPath,explicitTotalSlideCount:9,requiredNativeTableOwnerSlides:[2,5],requiredNativeChartOwnerSlides:[],fontPolicy:{basis:'design',families:[font]},pythonExecutable:process.env.PYTHON_EXECUTABLE||'python3',integrityValidatorPath:path.join(skill,'container_tools/inspect_presentation_package_integrity.py'),layoutValidatorPath:path.join(skill,'container_tools/inspect_presentation_layout_geometry.py'),layoutArgs:['--expected-slide-size-emu','12192000,6858000','--validate-heading-fit','--require-native-table-slide','2','--require-native-table-slide','5'],verifyArtifactToolImport:true,receiptPath:path.join(root,`build/${exportName}-validation.json`)});
+const result=await finalizePresentation({workspaceDir:root,candidatePath:candidate,finalPath,explicitTotalSlideCount:totalPages,requiredNativeTableOwnerSlides:[3,6],requiredNativeChartOwnerSlides:[],fontPolicy:{basis:'design',families:[font]},pythonExecutable:process.env.PYTHON_EXECUTABLE||'python3',integrityValidatorPath:path.join(skill,'container_tools/inspect_presentation_package_integrity.py'),layoutValidatorPath:path.join(skill,'container_tools/inspect_presentation_layout_geometry.py'),layoutArgs:['--expected-slide-size-emu','12192000,6858000','--validate-heading-fit','--require-native-table-slide','3','--require-native-table-slide','6'],verifyArtifactToolImport:true,receiptPath:path.join(root,`build/${exportName}-validation.json`)});
 console.log(JSON.stringify({path:result.finalPath,sha256:result.finalSha256,slides:result.packageIntegrity.slide_count,layout:result.presentationLayout.finding_count}));
