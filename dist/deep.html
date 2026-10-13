@@ -7,10 +7,11 @@
 <meta name="description" content="面向业务同事的四步跟练：普通 Chat 完成工单日报，提炼 Skill，安装，再在新 Chat 中验证。">
 <link rel="stylesheet" href="style.css">
 <script src="app.js" defer></script>
+<script src="site-interactions.js" type="module"></script>
 </head>
-<body>
+<body data-page-id="skill-engineering:deep">
 <a class="skip" href="#practice-route">跳到跟练步骤</a>
-<header class="site-header"><a class="brand" href="index.html">Skill Engineering<span>业务同事跟练</span></a><nav aria-label="资源"><a href="index.html#slide-07">返回课件</a><a href="#advanced">进阶阅读</a><a href="downloads/skill-engineering.pdf" download>课件 PDF</a><a href="downloads/skill-engineering.pptx" download>PPTX</a></nav></header>
+<header class="site-header"><a class="brand" href="index.html">Skill Engineering<span>业务同事跟练</span></a><nav aria-label="资源"><a href="courses.html">课程首页</a><a href="poster.html">海报总览</a><a href="index.html#slide-07">返回课件</a><a href="#advanced">进阶阅读</a><a href="downloads/skill-engineering.pdf" download>课件 PDF</a><a href="downloads/skill-engineering.pptx" download>PPTX</a></nav></header>
 <main class="reading">
 <p class="lesson-label">四步跟练 · 2026-10-13</p>
 <h1>从一次 Chat 到自己的 Skill</h1>
@@ -236,6 +237,7 @@
 <details><summary>2026-10-13 短提示词复测</summary><p>同机 Qoder 0.4.3、通用模式。普通任务不调用日报 Skill；同一 Chat 用短创建请求生成完整包，再通过原生上传入口安装。为避免覆盖已有练习技能，本次使用独立的验证名称，其余请求与本页一致。新 Chat 的验证目录预先只放输入数据。</p><table><thead><tr><th scope="col">检查</th><th scope="col">实际结果</th></tr></thead><tbody><tr><td>普通 Chat 与创建</td><td>日报平均 65 分钟；保存实际代码，短请求生成可安装的完整 ZIP</td></tr><tr><td>手动选择后，短任务：正常</td><td>实际调用安装包内脚本；5 单、完成 3、待处理 2、平均 65 分钟</td></tr><tr><td>短任务：变化</td><td>调用同一安装脚本；10 月 11 日为 1 单完成、平均 30 分钟</td></tr><tr><td>短任务：缺字段</td><td>调用同一安装脚本；指出缺少 minutes，退出码 1，没有成功日报</td></tr><tr><td>不选择 Skill 的自然语言请求</td><td>数字为 65，但未自动调用日报 Skill，此项未通过</td></tr></tbody></table><p>这次复测支持短任务在手动选择 Skill 后完成复用。自动触发需要继续改进，不能用正确数字代替触发证据；也未据此测量跨版本收益或生产效果。</p></details>
 </section>
 </main>
+<section class="course-feedback" id="course-feedback" data-feedback-course="skill-engineering" aria-labelledby="feedback-title"><div class="feedback-intro"><p class="lesson-label">一起把课程改得更好</p><h2 id="feedback-title">点赞、拍砖，或留一句话</h2><p>不用登录，也不用实名。哪里有用、哪里看不懂，都可以告诉我们。</p></div><div class="reactions"><button type="button" data-reaction="like" aria-pressed="false" disabled>👍 点赞 <span>—</span></button><button type="button" data-reaction="brick" aria-pressed="false" disabled>🧱 拍砖 <span>—</span></button><a href="poster.html">查看原版海报</a></div><form class="comment-form"><fieldset><legend>你的反馈</legend><label for="comment-body">留言 <span>必填 · 最多 1000 字</span></label><textarea id="comment-body" name="body" required maxlength="1000" rows="4" placeholder="例如：第 8 页的测试和评估，我还想看一个写作任务的例子。"></textarea><div class="comment-optional"><div><label for="comment-name">称呼 <span>选填 · 会公开</span></label><input id="comment-name" name="name" maxlength="40" placeholder="昵称即可" autocomplete="nickname"></div><div><label for="comment-contact">联系方式 <span>选填 · 仅讲师可见</span></label><input id="comment-contact" name="contact" maxlength="200" placeholder="邮箱、微信或其他方便联系的方式" autocomplete="off"></div></div><p class="contact-note">留言和称呼会公开。选填联系方式只为方便讲师联系你，不会展示在页面上。</p><button type="submit" disabled>发布留言</button></fieldset></form><p class="feedback-status" data-feedback-status role="status">开启 JavaScript 后可参与互动。</p><ul class="comment-list" data-comments aria-label="近期留言"></ul><noscript><p>开启 JavaScript 后可点赞和发布留言。</p></noscript></section>
 <footer class="byline">AI 经营交付效能专项组 <span>四步跟练 · 2026-10-13</span></footer>
 </body>
 </html>

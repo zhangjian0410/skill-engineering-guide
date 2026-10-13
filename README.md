@@ -35,19 +35,35 @@ python3 -m http.server 8765 --directory dist
 
 PPTX 生成使用 Codex 提供的 `@oai/artifact-tool`、Presentations skill 验证工具和选定字体。请在该运行环境中配置 `PRESENTATIONS_SKILL_DIR`、`PYTHON_EXECUTABLE`、`RUNTIME_NODE_MODULES` 及按需配置 `SLIDE_FONT`，然后运行 `node authoring/build-deck.mjs`。最终文件与验证回执默认以新的版本文件名写入 `build/`，不会覆盖发布版；检查后再复制到下载目录。PDF 导出需要 `reportlab` 和可嵌入的 CJK 字体，运行 `python3 authoring/build-pdf.py`，同时生成九页图解 PDF 与九页讲解手册。可用 `PDF_CJK_FONT` 配置字体路径。
 
-## 发布
+## 发布与静态资料备份
 
 ```bash
 npm run package
 ```
 
-将生成的 `build/cloudflare-pages.zip` 上传到现有 Cloudflare Pages 项目 `skill-engineering-guide`，选择 Production，然后部署。压缩包根目录就是网站根目录，原网址保持可用。
+该命令只生成 `build/course-static-backup.zip`，用于保存静态网页、课件与练习资料。它没有 Functions 或 D1，不能作为当前网站的完整生产发布包；不要用控制台上传此 ZIP 替代自动部署，否则留言与统计无法正常运行。
 
 现有 Pages 项目继续使用 Direct Upload，自动发布由 `.github/workflows/pages-deployment.yml` 完成：推送到 GitHub 的 `main` 分支后，构建网页和练习下载，检查页面链接、自评工具与参考脚本回归，再上传到同一个 `skill-engineering-guide` 项目。检查失败会停止发布。也可在 GitHub Actions 中手动运行工作流；只允许 `main` 发布生产版本。
 
-发布前需要在本仓库的 Actions secrets 中配置 `CLOUDFLARE_ACCOUNT_ID` 和 `CLOUDFLARE_API_TOKEN`。Token 使用本项目所属账户的 Cloudflare Pages Edit 权限；不将凭据提交到源码。接入方式依据 [Cloudflare 官方文档](https://developers.cloudflare.com/pages/how-to/use-direct-upload-with-continuous-integration/)。手工上传 ZIP 保留为备用方式。
+发布前需要在本仓库的 Actions secrets 中配置 `CLOUDFLARE_ACCOUNT_ID` 和 `CLOUDFLARE_API_TOKEN`。Token 使用本项目所属账户的 Cloudflare Pages Edit 权限；不将凭据提交到源码。完整发布走 GitHub Actions，或从本仓库根目录运行已授权的 `wrangler pages deploy dist`，同时上传 `functions/` 并使用 `wrangler.jsonc` 的 D1 绑定。接入方式依据 [Cloudflare 官方文档](https://developers.cloudflare.com/pages/how-to/use-direct-upload-with-continuous-integration/)。
 
 自动部署构建网页与练习包，不重新生成 PPTX 和两份 PDF。修改九页核心文案时，仍需按上面的导出步骤更新并提交下载文件，再推送发布。
+
+## 课程入口、海报与交流
+
+`courses.html` 是系列课程的统一入口，目录维护在 `src/courses.json`。当前只列真实存在的 Skill Engineering；原来的根地址仍直接打开九页课件，既有分享链接不变。新增课程时，先提供课程网页和资料，再在目录中登记学习、跟练、自评及海报地址。链接检查扫描全部已发布 HTML，包括后续课程。
+
+原版海报放在课程资料中，点击先进入 `poster.html` 在线查看。放大原图和下载 PNG 是单独的次要操作。课件导航区的“第一页”返回第 1 页，键盘 Home 同样生效；“课程首页”返回选课入口，全屏内也可使用。导航改动不改变九页正文、PPTX 或两份 PDF。
+
+课件及深入阅读的交流区共用本门课的点赞、拍砖和留言。无需登录或实名，称呼和联系方式均选填；称呼与留言公开，联系方式只存入 D1，公开 API 不返回该字段。讲师可在 Cloudflare → Storage & databases → D1 → `ai-course-community` → Explore Data 查看 `comments` 表；不要把数据库查询结果或联系方式提交到 GitHub。可在同一后台删除不适当的留言。近期公开列表显示最新 30 条。
+
+互动由 `functions/api/` 和 D1 的 `COURSE_DB` 绑定提供，不依赖本地伪计数。`wrangler.jsonc` 维护生产绑定，`migrations/` 是数据库结构来源。首版结构由 Cloudflare 控制台执行；现有 Pages Write 部署 Token 权限保持不变，CI 不执行远程数据库迁移。后续结构变更先审核迁移，再由拥有 D1 权限的账户执行，不把本地测试等同于生产初始化。
+
+课程首页展示站点今日与累计 PV/UV，从启用统计起计数，日界限为 UTC+8。每次页面加载上报一次，课件翻页不增加 PV；事件编号在 7 天内避免重试重复计数。UV 按 90 天第一方匿名浏览器 Cookie 去重，换浏览器、清理 Cookie 或重新获得标识都可能增加 UV，因此不代表真实人数；未启用 JavaScript 的访问不计入。访问记录不含称呼、联系方式或原始 IP。限流只存带服务端随机盐的 IP 摘要，短期访问事件用于重试去重，历史汇总保留。匿名标识不能保证一人一票。
+
+当前账户使用 Workers Free，功能沿免费额度运行，不自动升级付费套餐；额度用尽时，互动及统计可能暂时不可用，课件静态内容仍可阅读。相关额度以 Cloudflare 当前计划为准。
+
+本地验证用固定 Wrangler 4.149.0：`node --test tests/community-api.test.mjs` 自动创建隔离本地 D1、启动测试 Worker，检查 API、隐私、去重、限流及重启持久化，结束后只停止自己创建的进程。可用 `COMMUNITY_TEST_EVIDENCE_DIR` 指定证据目录。网页验证使用 `tests/portal-browser.mjs`，只允许本机测试地址，避免把合成留言提交到公网；现有 `tests/course-browser.mjs` 继续验证讲解、全屏和九页行为。
 
 `deep` 跟练页从未安装自己的日报 Skill 开始，顺序为普通 Chat、提炼、安装、新 Chat 验证。维护 `src/deep-template.html` 和 `src/prompts.json` 中的 `deep-*` 提示词；独立输入下载从 `practice/ticket-daily-report/tests/fixtures/` 生成，现成参考 Skill 留在进阶部分。
 

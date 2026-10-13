@@ -38,6 +38,10 @@ jobs:
         run: |
           node --test tests/self-review.test.mjs
           python3 tests/regression-checker.py
+      - name: Check anonymous interaction and metrics API with isolated local D1
+        env:
+          WRANGLER_SEND_METRICS: 'false'
+        run: node --test tests/community-api.test.mjs
       - name: Check deployment credentials
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

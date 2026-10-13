@@ -7,10 +7,11 @@
 <meta name="description" content="面向业务同事的四步跟练：普通 Chat 完成工单日报，提炼 Skill，安装，再在新 Chat 中验证。">
 <link rel="stylesheet" href="style.css">
 <script src="app.js" defer></script>
+<script src="site-interactions.js" type="module"></script>
 </head>
-<body>
+<body data-page-id="skill-engineering:deep">
 <a class="skip" href="#practice-route">跳到跟练步骤</a>
-<header class="site-header"><a class="brand" href="index.html">Skill Engineering<span>业务同事跟练</span></a><nav aria-label="资源"><a href="index.html#slide-07">返回课件</a><a href="#advanced">进阶阅读</a><a href="downloads/skill-engineering.pdf" download>课件 PDF</a><a href="downloads/skill-engineering.pptx" download>PPTX</a></nav></header>
+<header class="site-header"><a class="brand" href="index.html">Skill Engineering<span>业务同事跟练</span></a><nav aria-label="资源"><a href="courses.html">课程首页</a><a href="poster.html">海报总览</a><a href="index.html#slide-07">返回课件</a><a href="#advanced">进阶阅读</a><a href="downloads/skill-engineering.pdf" download>课件 PDF</a><a href="downloads/skill-engineering.pptx" download>PPTX</a></nav></header>
 <main class="reading">
 <p class="lesson-label">四步跟练 · {{DATE}}</p>
 <h1>从一次 Chat 到自己的 Skill</h1>
@@ -223,6 +224,7 @@
 <details><summary>2026-10-13 短提示词复测</summary><p>同机 Qoder 0.4.3、通用模式。普通任务不调用日报 Skill；同一 Chat 用短创建请求生成完整包，再通过原生上传入口安装。为避免覆盖已有练习技能，本次使用独立的验证名称，其余请求与本页一致。新 Chat 的验证目录预先只放输入数据。</p><table><thead><tr><th scope="col">检查</th><th scope="col">实际结果</th></tr></thead><tbody><tr><td>普通 Chat 与创建</td><td>日报平均 65 分钟；保存实际代码，短请求生成可安装的完整 ZIP</td></tr><tr><td>手动选择后，短任务：正常</td><td>实际调用安装包内脚本；5 单、完成 3、待处理 2、平均 65 分钟</td></tr><tr><td>短任务：变化</td><td>调用同一安装脚本；10 月 11 日为 1 单完成、平均 30 分钟</td></tr><tr><td>短任务：缺字段</td><td>调用同一安装脚本；指出缺少 minutes，退出码 1，没有成功日报</td></tr><tr><td>不选择 Skill 的自然语言请求</td><td>数字为 65，但未自动调用日报 Skill，此项未通过</td></tr></tbody></table><p>这次复测支持短任务在手动选择 Skill 后完成复用。自动触发需要继续改进，不能用正确数字代替触发证据；也未据此测量跨版本收益或生产效果。</p></details>
 </section>
 </main>
+{{FEEDBACK}}
 <footer class="byline">AI 经营交付效能专项组 <span>四步跟练 · {{DATE}}</span></footer>
 </body>
 </html>
