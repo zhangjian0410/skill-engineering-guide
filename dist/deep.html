@@ -142,13 +142,16 @@
 <p>对应课件第 9 页。已有 Skill 时，可先用<a href="self-review.html">只读自评</a>定位缺口。自评给出问题与建议；下面的检查计划确定怎样验证。两者都不会直接生成 tests、evals 或运行任务。</p>
 <h3>1. 先确认检查什么</h3>
 <p>先准备自己的完整 Skill、输入样例和已经确认的答案或评审标准，让同一个 Chat 能读到这些材料。工单练习可借用参考包的 tests/fixtures 和 tests/expected，但自己的脚本名称、参数与输出格式以实际实现为准。使用下面的请求，应该得到一张场景表：正常、可处理变化、应停止异常，每案有输入、标准及依据、运行方式和通过条件。例如日报正常案确认平均 65，缺字段案确认停止。逐案核对计划，纠正后再确认；没有可靠依据的标准标为待确认。</p>
+<p>若 AI 找不到文件，补充 Skill 和材料文件夹的完整路径，确认它能读取后再继续。</p>
 <details class="prompt"><summary>复制：准备检查计划（不生成文件）</summary><pre id="regression-plan">只读这个 Skill，准备正常、变化和应停止场景的检查计划。每案列输入、可信答案或评审标准及依据、运行方式和通过条件，分清脚本测试与 Agent 任务评估。缺少标准标待确认。只写计划，暂不运行、修改或安装。</pre><button type="button" data-copy="regression-plan">复制提示词</button><span class="copy-status" aria-live="polite"></span></details>
 <h3>2. 计划确认后，再生成检查文件</h3>
 <p>留在同一个 Chat，明确回复计划已确认，再发下面的请求。它要求生成与参考包职责类似的 tests 和 evals：可机械判定的内容有程序检查，AI 任务有提示、输入和核对标准，两者共用样例与答案。写作质量等内容可保留人工或 LLM 的评审标准，不强行写成程序断言。</p>
 <details class="prompt"><summary>复制：按确认计划补齐 tests 和 evals</summary><pre id="verification-files">按确认的计划，为这个 Skill 补齐 tests/ 和 evals/evals.json，适配现有接口与输出。样例和已确认答案随包保存，两类检查共用，不能用当前输出反推答案。能程序判定的写成可运行检查，其余保留评审标准；evals 写任务、路径和核对项。更新使用说明，注明有无自动评估程序；缺标准标待确认。不覆盖无关文件。只生成，暂不运行、安装或发布。</pre><button type="button" data-copy="verification-files">复制提示词</button><span class="copy-status" aria-live="polite"></span></details>
 <p><strong>应该看到：</strong>实际生成的文件路径、内容清单和使用说明，待确认项单列。样例放 tests/fixtures，答案放 tests/expected，程序检查和 evals 引用同一份文件，复制完整 Skill 到新目录后仍能找到。检查 Skill 名称、脚本路径、参数、输出格式和业务标准是否适用于自己的实现；<code>my-ticket-daily-report</code> 不能直接套用参考包中的技能名和脚本路径。生成文件后仍要实际运行，不能把“已生成”当作“已通过”。</p>
+<p>若样例或答案还留在包外，或检查程序没有读取它声称共用的答案文件，先让 AI 修正，再运行。生成请求并不保证一次写对。</p>
 <h3>3. 运行检查，保留结果，再核对 Agent 任务</h3>
 <p>先让 AI 按新生成的使用说明运行程序检查。应该看到每案的预期与实际、命令、退出码和汇总，记录保存在包外的新目录。失败时先定位：可能是业务代码，也可能是检查程序或路径问题。不能为了显示 PASS 改掉已确认的答案。</p>
+<p>每轮选择未使用过的输出位置，保留旧结果。若检查程序要求目录尚不存在，让程序创建，不要先手动建好。</p>
 <details class="prompt"><summary>复制：运行生成的程序检查</summary><pre id="verification-run">按使用说明运行这些程序检查，结果保存在包外的新目录，保留命令、退出码和失败记录。有问题先定位原因，再修复并重跑；不要为通过检查改动已确认答案。</pre><button type="button" data-copy="verification-run">复制提示词</button><span class="copy-status" aria-live="polite"></span></details>
 <p>程序检查通过后，按自己 evals.json 的一案，在新 Chat 中给 Agent 任务与输入，再保留输出和工具执行记录，交给核对者评审，操作见<a href="#evals-use">下一节的 LLM 核对例子</a>。使用自己的场景 ID 和实际输出文件；自己的 Skill 若输出 Markdown，就核对 Markdown，不要求它生成参考包的三个文件。程序测试通过不会替你完成这些 Agent 任务。</p>
 </section>
