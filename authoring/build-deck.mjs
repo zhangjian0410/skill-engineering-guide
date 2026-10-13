@@ -66,9 +66,11 @@ for(const [i,s] of data.slides.entries()){
  if(s.kind==='package'){
   shape(slide,'skill-root',396,243,487,50,'#E3F2FF');text(slide,'skill-root-label',s.root,410,251,459,33,29,C.blue,true,'center');
   shape(slide,'root-stem',638,293,3,23,C.cyan,'rect','none');
-  shape(slide,'directory-branch',179,314,922,3,C.cyan,'rect','none');
-  for(let j=0;j<4;j++)shape(slide,`directory-stem-${j}`,178+j*307,316,3,34,C.cyan,'rect','none');
-  s.cards.forEach((q,j)=>{const x=48+j*307;shape(slide,`directory-${j}`,x,350,263,188);text(slide,`directory-${j}-label`,q.label,x+16,369,231,33,27,C.navy,true);text(slide,`directory-${j}-sub`,q.sub,x+16,413,231,30,20,C.blue,true);text(slide,`directory-${j}-body`,q.body,x+16,455,231,72,19,C.muted);});
+  const gap=24,cardWidth=(1184-gap*(s.cards.length-1))/s.cards.length;
+  const firstCenter=48+cardWidth/2,lastCenter=1232-cardWidth/2;
+  shape(slide,'directory-branch',firstCenter,314,lastCenter-firstCenter,3,C.cyan,'rect','none');
+  for(let j=0;j<s.cards.length;j++)shape(slide,`directory-stem-${j}`,firstCenter+j*(cardWidth+gap),316,3,34,C.cyan,'rect','none');
+  s.cards.forEach((q,j)=>{const x=48+j*(cardWidth+gap);shape(slide,`directory-${j}`,x,350,cardWidth,188);text(slide,`directory-${j}-label`,q.label,x+16,369,cardWidth-32,33,25,C.navy,true);text(slide,`directory-${j}-sub`,q.sub,x+16,413,cardWidth-32,30,19,C.blue,true);text(slide,`directory-${j}-body`,q.body,x+16,455,cardWidth-32,72,19,C.muted);});
   text(slide,'optional-directories',s.optional,48,561,1184,34,22,C.blue,true);
  }
  if(s.kind==='qoder'){
@@ -77,7 +79,8 @@ for(const [i,s] of data.slides.entries()){
  }
  if(s.kind==='verification'){
   s.cards.forEach((q,j)=>{const x=48+j*417;shape(slide,`verification-${j}`,x,252,350,213);text(slide,`verification-${j}-label`,q.label,x+20,281,310,36,30,C.navy,true);text(slide,`verification-${j}-sub`,q.sub,x+20,338,310,34,23,C.blue,true);text(slide,`verification-${j}-body`,q.body,x+20,391,310,60,23,C.muted);if(j<2)arrow(slide,x+365,345,35,40);});
-  s.cases.forEach(([a,b],j)=>{const x=48+j*417;shape(slide,`case-${j}`,x,491,350,90,'#F8FBFF');text(slide,`case-${j}-name`,a,x+16,503,318,29,23,C.blue,true);text(slide,`case-${j}-expected`,b,x+16,543,318,29,21,C.muted);});
+  s.cases.forEach(([a,b],j)=>{const x=48+j*417;shape(slide,`case-${j}`,x,491,350,70,'#F8FBFF');text(slide,`case-${j}-name`,a,x+16,497,318,29,23,C.blue,true);text(slide,`case-${j}-expected`,b,x+16,533,318,27,21,C.muted);});
+  text(slide,'grading-note',s.grading_note,48,572,1184,26,20,C.blue);
  }
  if(s.kind==='practice'){
   panel(slide,'practice-path','今天就可以开始的一次实践',48,256,606,311);s.steps.forEach(([a,b],j)=>{const y=326+j*76;text(slide,`practice-${j}-number`,String(j+1).padStart(2,'0'),69,y,53,40,29,C.cyan,true);text(slide,`practice-${j}-label`,a,139,y,481,32,25,C.navy,true);text(slide,`practice-${j}-body`,b,139,y+38,481,32,21,C.muted);});

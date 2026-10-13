@@ -1,4 +1,4 @@
-工单日报参考练习包（课程 v2.4，Skill 本身 v1.0）
+工单日报参考练习包（课程 v2.5，Skill 本身 v1.0）
 AI 经营交付效能专项组
 
 全部数据为教学虚构数据。Python 3.9+，不需要第三方依赖。
@@ -35,7 +35,9 @@ ticket-daily-report/
 
 4. 更多任务按 evals/README.txt 执行。evals.json 的四案包括正常、变化、
    缺字段与同一 ID 内容冲突。每案开新 Chat，使用新的结果目录。
-   未运行的项目保持 UNKNOWN；场景文件本身不会自动启动 Qoder。
+   未运行的项目保持 UNKNOWN；当前没有自动评估程序。
+   可以另开评审 Chat，把 evals.json、可信答案、实际文件和执行记录交给 LLM 核对；
+   材料准备与短请求见 evals/README.txt。
 
 技术同事：在解压后的 ticket-daily-report 文件夹中运行
 

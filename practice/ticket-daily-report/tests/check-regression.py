@@ -95,7 +95,7 @@ def main():
     if not pipeline.is_file():
         parser.error("Pipeline unavailable; no cases executed (UNKNOWN)")
     output.mkdir(parents=True, exist_ok=False)
-    result = {"schema_version": 1, "course_version": "2.4",
+    result = {"schema_version": 1, "course_version": "2.5",
               "started_at_utc": datetime.now(timezone.utc).isoformat(),
               "scope": "Fixed-script results and stopping; Agent discovery and migration UNKNOWN",
               "python": sys.version.split()[0], "script_sha256": digest(pipeline),
