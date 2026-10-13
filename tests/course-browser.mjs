@@ -18,7 +18,8 @@ try {
  assert.equal(await page.locator('#slide-02 .sample-table tbody tr').count(),expected.length);
  const rows=await page.locator('#slide-02 .sample-table tbody tr').allTextContents();
  expected.forEach((row,i)=>{assert.ok(rows[i].includes(row.ticket_id));assert.ok(rows[i].includes(row.created_date));});
- assert.ok(await page.locator('#slide-02 .sample-task').textContent().then(text=>text.includes('10 月 10 日')&&text.includes('去重')&&text.includes('平均耗时')));
+ assert.equal(await page.locator('#slide-02 .sample-task .panel-body p').textContent(),
+  data.slides.find(slide=>slide.kind==='case').task);
  assert.ok(await page.locator('#slide-02 .sample-output').textContent().then(text=>text.includes('65 分钟')));
  results.push('case example: complete seven fixture rows and explicit AI task/report visible PASS');
  await page.goto(base);

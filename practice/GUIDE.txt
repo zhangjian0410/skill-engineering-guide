@@ -1,4 +1,4 @@
-工单日报练习包 v2.1（Skill 本身 v1.0）
+工单日报参考练习包（课程 v2.3，Skill 本身 v1.0）
 AI 经营交付效能专项组
 
 全部数据为教学虚构数据。Python 3.9+，不需要第三方依赖。
@@ -12,7 +12,8 @@ AI 经营交付效能专项组
 
 2. 开全新 Chat，输入 / 选择 ticket-daily-report。
    提供 fixtures/normal.json，统计日期 2026-10-10，指定一个新的结果目录。
-   要求读取数据契约、业务规则，运行固定脚本，校验失败停止。
+   可直接说：用 fixtures/normal.json 生成 2026-10-10 的工单日报，保存到新的 ticket-reference-run 文件夹。
+   规则、脚本调用和异常停止应由已安装的 Skill 提供，查看执行记录确认实际使用。
 
    不依赖 Agent 的直接运行方法（在本包根目录运行）：
    python3 ticket-daily-report/scripts/pipeline.py --input fixtures/normal.json --date 2026-10-10 --out result-first
@@ -26,11 +27,17 @@ AI 经营交付效能专项组
    应与 expected/2026-10-11.json 一致。字段顺序、输入顺序与无关字段不应改变计算口径。
 
 5. 分别开新 Chat，使用 missing-field.json、conflicting-id.json。
-   应停止并指出缺字段或 ID 冲突，不创建成功结果，也不编造字段。
+   应停止并指出缺字段，或同一 ID 的日期、状态、耗时不一致，不创建成功结果。
 
 6. 手动选择成功后，再试自然语言“用这份工单明细生成创建日期为 2026-10-10 的日报”。
    检查是否找到本 Skill，实际调用什么脚本，是否核验结果。
-   最后让另一位同事安装同版本再试。程序测试通过不能代替这一步。
+   最后让另一位同事安装同版本再试。程序测试和 AI 任务评估分别留记录。
+
+   Tests 通常检查脚本等确定的程序行为。Evals 用实际任务评估 AI 的结果与过程，
+   可以由程序发起并评分，也可以通过界面操作、按同样标准核对。
+   expected/ 是依据已确认规则保存的答案，可供两类检查共用；独立性取决于依据，
+   不是目录位置。评估时给受测 AI 任务和输入，答案留给核对者，避免照答案交付。
+   tests/ 和 evals/ 是常见的可选目录，本参考包未另设这两个目录。
 
 7. 批量重跑固定脚本：
    python3 check-regression.py --out ../ticket-regression-first
