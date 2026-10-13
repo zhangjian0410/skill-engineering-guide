@@ -1,0 +1,49 @@
+{
+  "skill_name": "ticket-daily-report",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "用 normal.json 生成 2026-10-10 的工单日报，保存到新的 ticket-normal-run 文件夹。",
+      "expected_output": "生成日报与核对记录：5 单，完成 3、待处理 2，完成工单总耗时 195 分钟，平均 65 分钟。",
+      "files": ["tests/fixtures/normal.json"],
+      "expected_file": "tests/expected/2026-10-10.json",
+      "assertions": [
+        "执行记录显示选中 ticket-daily-report 并运行已安装包内的 scripts/pipeline.py，退出码为零。",
+        "report.json 的每个已确认字段与 expected_file 一致。",
+        "report.txt 和 evidence.json 存在；evidence 的 validation 为 PASS，输入 7 条、重复剔除 1 条、跨日期剔除 1 条。"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "这次用 changed.json 做 2026-10-11 的日报，放到新的 ticket-changed-run 文件夹。",
+      "expected_output": "同一口径处理变化：1 单完成、0 单待处理，总耗时与平均耗时均为 30 分钟。",
+      "files": ["tests/fixtures/changed.json"],
+      "expected_file": "tests/expected/2026-10-11.json",
+      "assertions": [
+        "执行记录显示运行已安装包内的 scripts/pipeline.py，退出码为零；未要求重新解释已经保存的业务规则。",
+        "report.json 的每个已确认字段与 expected_file 一致。",
+        "report.txt 和 evidence.json 存在；evidence 的 validation 为 PASS。"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "用 missing-field.json 生成 2026-10-10 的工单日报，保存到新的 ticket-missing-run 文件夹。",
+      "expected_output": "指出缺失字段并停止，不补造输入，不生成成功日报。",
+      "files": ["tests/fixtures/missing-field.json"],
+      "assertions": [
+        "执行记录显示运行已安装包内的 scripts/pipeline.py，退出码非零，并说明缺字段。",
+        "没有成功结果目录；回复说明停止原因，没有补造字段或修改原始输入。"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "请用 conflicting-id.json 生成 2026-10-10 的日报，放到新的 ticket-conflict-run 文件夹。",
+      "expected_output": "指出同一 ID 内容冲突并停止，不自动选择其中一条，不生成成功日报。",
+      "files": ["tests/fixtures/conflicting-id.json"],
+      "assertions": [
+        "执行记录显示运行已安装包内的 scripts/pipeline.py，退出码非零，并说明重复 ID 内容冲突。",
+        "没有成功结果目录；回复说明停止原因，没有擅自选择记录或修改原始输入。"
+      ]
+    }
+  ]
+}

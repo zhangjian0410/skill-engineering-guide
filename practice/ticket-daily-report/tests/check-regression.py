@@ -83,7 +83,7 @@ def run_case(name, day, expected_file, stop_reason, pipeline, output):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, required=True, help="New directory outside the Skill package")
-    parser.add_argument("--pipeline", type=Path, default=ROOT / "ticket-daily-report/scripts/pipeline.py",
+    parser.add_argument("--pipeline", type=Path, default=ROOT.parent / "scripts/pipeline.py",
                         help="Optional controlled teaching copy; never edits the selected script")
     args = parser.parse_args()
     output, pipeline = args.out.absolute(), args.pipeline.resolve()
@@ -95,13 +95,13 @@ def main():
     if not pipeline.is_file():
         parser.error("Pipeline unavailable; no cases executed (UNKNOWN)")
     output.mkdir(parents=True, exist_ok=False)
-    result = {"schema_version": 1, "course_version": "2.1",
+    result = {"schema_version": 1, "course_version": "2.4",
               "started_at_utc": datetime.now(timezone.utc).isoformat(),
               "scope": "Fixed-script results and stopping; Agent discovery and migration UNKNOWN",
               "python": sys.version.split()[0], "script_sha256": digest(pipeline),
               "rules_sha256": digest(package / "references/business-rules.md"),
               "contract_sha256": digest(package / "references/data-contract.md"),
-              "expectation_basis": "expected/README.txt and confirmed teaching business-rules.md",
+              "expectation_basis": "tests/expected/README.txt and confirmed references/business-rules.md",
               "cases": [run_case(*case, pipeline, output) for case in CASES]}
     verdicts = [case["verdict"] for case in result["cases"]]
     result["verdict"] = "FAIL" if "FAIL" in verdicts else "UNKNOWN" if "UNKNOWN" in verdicts else "PASS"
@@ -109,7 +109,7 @@ def main():
     for case in result["cases"]:
         for field in ("stdout", "stderr"):
             if field in case:
-                case[field] = case[field].replace(str(ROOT), "practice").replace(str(output), "results")
+                case[field] = case[field].replace(str(ROOT.parent), "ticket-daily-report").replace(str(output), "results")
     (output / "regression.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     for case in result["cases"]:
         print(case["case"] + ": " + case["verdict"])

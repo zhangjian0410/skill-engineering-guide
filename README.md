@@ -49,7 +49,7 @@ npm run package
 
 自动部署构建网页与练习包，不重新生成 PPTX 和两份 PDF。修改九页核心文案时，仍需按上面的导出步骤更新并提交下载文件，再推送发布。
 
-`deep` 跟练页从未安装自己的日报 Skill 开始，顺序为普通 Chat、提炼、安装、新 Chat 验证。维护 `src/deep-template.html` 和 `src/prompts.json` 中的 `deep-*` 提示词；独立输入下载从 `practice/fixtures/` 生成，现成参考 Skill 留在进阶部分。
+`deep` 跟练页从未安装自己的日报 Skill 开始，顺序为普通 Chat、提炼、安装、新 Chat 验证。维护 `src/deep-template.html` 和 `src/prompts.json` 中的 `deep-*` 提示词；独立输入下载从 `practice/ticket-daily-report/tests/fixtures/` 生成，现成参考 Skill 留在进阶部分。
 
 ## 练习边界
 
@@ -61,13 +61,13 @@ npm run package
 
 `npm run build` 同时生成网页、完整练习 ZIP 和可导入 Skill ZIP。包只包含指定源码目录，排除本地输出与缓存。自评模板仍为只读试用版，版本独立于课程。
 
-在解压练习包根目录运行 `python3 check-regression.py --out ../ticket-regression-first`。检查器核对独立 expected 和异常停止；`example-results/` 保留受控副本的真实失败与修复记录。它不证明 Agent 行为或跨机通过。
+进入解压后的 `ticket-daily-report/`，运行 `python3 tests/check-regression.py --out ../ticket-regression-first`。检查器核对 `tests/expected/` 和异常停止；`tests/example-results/` 保留受控副本的真实失败与修复记录。它不证明 Agent 行为或跨机通过。
 
 实现检查：`python3 tests/regression-checker.py`、`node --test tests/self-review.test.mjs`。启动本地预览后，`node tests/course-browser.mjs` 检查桌面、手机、无 JS 和全屏。浏览器检查需要 Playwright；它仅是作者验证依赖，不是学员练习依赖。
 
 ## v2.2 示例与讲解
 
-第 2 页从同一份 `practice/fixtures/normal.json` 读取完整 7 行数据，展示要交给 AI 的任务和日报计算过程。网页表格与 PPTX 可编辑表格通过 `scripts/course-data.mjs` 读取同一来源。九页讲解改为围绕工单案例的讲述，并同步到 PPTX 备注和讲解 PDF。练习包、自评模板及其历史运行记录沿用原版本。
+第 2 页从同一份 `practice/ticket-daily-report/tests/fixtures/normal.json` 读取完整 7 行数据，展示要交给 AI 的任务和日报计算过程。网页表格与 PPTX 可编辑表格通过 `scripts/course-data.mjs` 读取同一来源。九页讲解改为围绕工单案例的讲述，并同步到 PPTX 备注和讲解 PDF。练习包、自评模板及其历史运行记录沿用原版本。
 
 浏览器检查按内容版本保存证据；设置 `COURSE_TEST_EVIDENCE_DIR` 可为本地与公网执行分别指定目录。
 
@@ -78,3 +78,9 @@ npm run package
 安装后任务只给文件、日期与新输出目录；固定规则和脚本调用由 Skill 提供。首次普通 Chat 保留尚未沉淀的业务口径，创建步骤要求完整包；路径和模板排错放入帮助。主课件第 7 页链接到四步跟练，现成参考包另放进阶。
 
 修改后的网页、PPTX 备注与讲解 PDF 同源。仍需按既有作者流程导出并核对九页 PPTX、课件 PDF 和讲解 PDF，再提交下载文件。参考包保持教学格式，`GUIDE.txt` 同步解释测试/评估；不提供一键自动运行 Qoder 的评估程序。
+
+## v2.4 统一参考包目录
+
+现成 Skill 与完整参考包都将输入、已确认答案、检查器和历史脚本运行记录归入 `ticket-daily-report/tests/`。`evals/evals.json` 使用 Agent Skills 指南的场景结构，并直接引用 tests 的输入与答案；`evals/README.txt` 说明如何在 Qoder 新 Chat 中逐案执行和留证。配置中的 `expected_file` 是本包的核对字段，不假设工具自动识别。没有新增自动启动 Qoder 的程序或实测版本比较。
+
+页面、GUIDE、Skill 入口与 PPTX/PDF 统一这套目录。处理脚本、原始输入、确认答案和历史运行 JSON 保持字节一致；历史记录的来源与摘要保留当时值。两种 ZIP 解压后都能独立运行检查器，相关作者测试在发布前检查其可移植性与场景引用。

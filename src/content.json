@@ -2,7 +2,7 @@
   "title": "Skill Engineering 自学课件",
   "subtitle": "从 Chat 使用者，到 Skill 工程实践者",
   "byline": "出品：AI 经营交付效能专项组",
-  "version": "2.3",
+  "version": "2.4",
   "date": "2026-10-13",
   "formula": "Skill Engineering = Skill Design + Deterministic Execution + Validation + Evaluation + Reuse",
   "formula_terms": [
@@ -89,12 +89,12 @@
       "lead": "拿到下面这份工单明细，怎样让 AI 把它整理成 10 月 10 日的日报？",
       "input_label": "输入：7 行虚构工单明细",
       "takeaway": "这份明细要变成一份日报：去重、按创建日期筛选，再统计数量与完成单平均耗时。",
-      "source": "同一份虚构 practice/fixtures/normal.json 的完整 7 行；按 business-rules.md 及独立 expected/2026-10-10.json 核对。表格仅转换阅读标签，未改变原始数据。",
+      "source": "同一份虚构 practice/ticket-daily-report/tests/fixtures/normal.json 的完整 7 行；按 business-rules.md 及已确认 tests/expected/2026-10-10.json 核对。表格仅转换阅读标签，未改变原始数据。",
       "explanation": {
         "text": "这 7 行就是我们交给 AI 的原始明细。T004 出现了两次，同一张工单只能算一次；T006 是 10 月 11 日创建的，也不该进入 10 日的日报。处理后剩下 5 张工单，其中 3 张已完成、2 张待处理。完成的 3 张分别用了 60、45、90 分钟，加起来 195 分钟，除以 3，平均就是 65 分钟。我们希望 AI 把明细整理成这样的日报，并让人能核对它怎么算的。把这些规则保存成 Skill，下次拿到新数据，就有了可以沿用的方法。",
         "deepAnchor": "ticket-practice"
       },
-      "sampleFixture": "practice/fixtures/normal.json",
+      "sampleFixture": "practice/ticket-daily-report/tests/fixtures/normal.json",
       "sample_note": "T004 重复一行；T006 属于 10 月 11 日。",
       "task_label": "交给 AI 的任务",
       "task": "请统计 10 月 10 日创建的工单。相同 ID 完全一致时保留一条，日期、状态或耗时不一致时停下来等我确认。告诉我总数、完成数、待处理数和完成单平均耗时。",
@@ -234,7 +234,7 @@
       "takeaway": "主文件简洁，细节按需加载（Progressive Disclosure）。简单任务可以只有 SKILL.md。",
       "source": "原横版课件 05 的目录架构；标准必需入口与可选目录依据 Agent Skills 规范。inspect/transform/validate 为职责示例，练习包将三阶段收在 pipeline.py，未冒充包含三个同名脚本。",
       "explanation": {
-        "text": "SKILL.md 说明这项工作怎么开始、什么时候完成；详细口径放 references，处理代码放 scripts。图上的三个脚本名表示职责，参考包把它们合在 pipeline.py 中。tests 常放检查脚本的程序测试，evals 常放让 AI 实际完成任务的场景和判定标准。这是组织文件的惯例，目录都按需增加。正确答案可以供两类检查共用，放在包内或包外均可；关键是来自已确认的规则，而不是照抄当前输出。",
+        "text": "SKILL.md 说明这项工作怎么开始、什么时候完成；详细口径放 references，处理代码放 scripts。图上的三个脚本名表示职责，参考包把它们合在 pipeline.py 中。tests 常放检查脚本的程序测试，evals 常放让 AI 实际完成任务的场景和判定标准。这是组织文件的惯例，目录都按需增加。参考包将程序检查、输入样例和已确认答案放在 tests，AI 任务与核对项放在 evals/evals.json，直接引用同一份样例和答案。实际结果另存包外的新目录。答案依据已确认的业务规则，不能照抄当前输出。",
         "deepAnchor": "directories"
       }
     },

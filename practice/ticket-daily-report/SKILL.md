@@ -21,6 +21,8 @@ python3 scripts/pipeline.py --input <明细路径> --date <YYYY-MM-DD> --out <�
 
 退出码非零：报告缺口，停止成功交付，不补造字段或修改原始数据。需要变更业务口径时先由业务负责人确认，再修改规则和实现并重新验证。
 
-退出码为零后：读取 evidence.json，确认 validation 为 PASS、统计日期正确，交付 report.json、report.txt 与 evidence.json，并说明输入数、重复数和跨日期排除数。首次练习用包外 expected/ 中对应日期的独立预期结果核对。
+退出码为零后：读取 evidence.json，确认 validation 为 PASS、统计日期正确，交付 report.json、report.txt 与 evidence.json，并说明输入数、重复数和跨日期排除数。
 
 脚本测试只证明程序行为。新 Chat 中确认本 Skill 被选中、脚本实际运行、失败正确停止，才构成该环境的 Agent 行为验证。规则和资源应来自包内文件，不依赖此前对话。
+
+维护与验证本 Skill 时：程序测试运行 `python3 tests/check-regression.py --out <包外新目录>`；AI 任务场景见 [evals/README.txt](evals/README.txt) 与 [evals/evals.json](evals/evals.json)。两者共用 `tests/fixtures/` 的输入和 `tests/expected/` 的已确认答案；日常生成日报只需用户提供的输入与上述规则、脚本。

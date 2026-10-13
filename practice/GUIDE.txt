@@ -1,61 +1,59 @@
-工单日报参考练习包（课程 v2.3，Skill 本身 v1.0）
+工单日报参考练习包（课程 v2.4，Skill 本身 v1.0）
 AI 经营交付效能专项组
 
 全部数据为教学虚构数据。Python 3.9+，不需要第三方依赖。
+本版统一目录；处理脚本、业务口径和已确认答案保持原样。
 
-1. 将 ticket-daily-report.zip 导入 Qoder 的技能管理，或让 Qoder 把本包 ticket-daily-report/ 放到当前产品的正确技能目录。
-   Qoder 与 QoderWork、IDE、CLI 的目录和加载入口不同。当前产品指南：
+ticket-daily-report/
+  SKILL.md                       使用说明
+  references/                    业务规则与数据契约
+  scripts/pipeline.py            处理脚本
+  tests/check-regression.py      程序测试
+  tests/fixtures/                输入样例
+  tests/expected/                已确认的正确答案
+  tests/example-results/         历史失败与修复记录
+  evals/evals.json               AI 任务提示、输入与判定标准
+  evals/README.txt               在 Qoder 中逐案执行的方法
+
+安装与运行：
+1. 检查说明和脚本，再将 ticket-daily-report.zip 导入 Qoder 的技能管理。
+   完整参考包用于阅读和对照，现成 Skill ZIP 用于导入。
+   Qoder、QoderWork、IDE、CLI 的加载入口按当前产品指南核对：
    https://docs.qoder.com/zh/qoder/skills
    https://docs.qoder.com/zh/qoderwork/skills
    https://docs.qoder.com/zh/cli/Skills
-   先检查说明和脚本，再导入。这个练习不要求修改全局权限。
 
-2. 开全新 Chat，输入 / 选择 ticket-daily-report。
-   提供 fixtures/normal.json，统计日期 2026-10-10，指定一个新的结果目录。
-   可直接说：用 fixtures/normal.json 生成 2026-10-10 的工单日报，保存到新的 ticket-reference-run 文件夹。
-   规则、脚本调用和异常停止应由已安装的 Skill 提供，查看执行记录确认实际使用。
+2. 新建一个验证文件夹，将 tests/fixtures/normal.json 复制进去。
+   开全新 Chat，选择验证文件夹，用 / 选择 ticket-daily-report，然后说：
+   用 normal.json 生成 2026-10-10 的工单日报，保存到新的 ticket-reference-run 文件夹。
+   查看执行记录，确认实际调用的是已安装 Skill 中的处理脚本。
 
-   不依赖 Agent 的直接运行方法（在本包根目录运行）：
-   python3 ticket-daily-report/scripts/pipeline.py --input fixtures/normal.json --date 2026-10-10 --out result-first
+3. 查看 report.json，与 tests/expected/2026-10-10.json 核对。
+   应有 5 单、完成 3 单、待处理 2 单、完成总耗时 195 分钟、平均 65 分钟。
+   evidence.json 应为 validation=PASS，输入 7 条、重复剔除 1 条、跨日期剔除 1 条。
+   统计的是指定日期创建工单的当前状态，不是当日完成量。
 
-3. 查看 report.json，与 expected/2026-10-10.json 核对。
-   应有 5 单、完成 3 单、待处理 2 单、完成工单总耗时 195 分钟、平均耗时 65 分钟。
-   evidence.json 应为 validation=PASS，输入 7 条，重复剔除 1 条，跨日期剔除 1 条。
-   统计的是指定日期创建工单的当前状态，不能把它当作当日完成量。
+4. 更多任务按 evals/README.txt 执行。evals.json 的四案包括正常、变化、
+   缺字段与同一 ID 内容冲突。每案开新 Chat，使用新的结果目录。
+   未运行的项目保持 UNKNOWN；场景文件本身不会自动启动 Qoder。
 
-4. 再开新 Chat，使用 fixtures/changed.json，统计日期 2026-10-11，输出到另一个新目录。
-   应与 expected/2026-10-11.json 一致。字段顺序、输入顺序与无关字段不应改变计算口径。
+技术同事：在解压后的 ticket-daily-report 文件夹中运行
 
-5. 分别开新 Chat，使用 missing-field.json、conflicting-id.json。
-   应停止并指出缺字段，或同一 ID 的日期、状态、耗时不一致，不创建成功结果。
+单案直接检查：
+python3 scripts/pipeline.py --input tests/fixtures/normal.json --date 2026-10-10 --out ../ticket-first-run
 
-6. 手动选择成功后，再试自然语言“用这份工单明细生成创建日期为 2026-10-10 的日报”。
-   检查是否找到本 Skill，实际调用什么脚本，是否核验结果。
-   最后让另一位同事安装同版本再试。程序测试和 AI 任务评估分别留记录。
+四案程序测试：
+python3 tests/check-regression.py --out ../ticket-regression-first
 
-   Tests 通常检查脚本等确定的程序行为。Evals 用实际任务评估 AI 的结果与过程，
-   可以由程序发起并评分，也可以通过界面操作、按同样标准核对。
-   expected/ 是依据已确认规则保存的答案，可供两类检查共用；独立性取决于依据，
-   不是目录位置。评估时给受测 AI 任务和输入，答案留给核对者，避免照答案交付。
-   tests/ 和 evals/ 是常见的可选目录，本参考包未另设这两个目录。
+输出目录放在 Skill 包外且必须尚不存在。打开 regression.json 查看每案预期、实际、差异与退出码。
+程序测试和 AI 任务评估共用 tests/ 的输入与答案，执行记录分别留存。
+答案依据见 tests/expected/README.txt；不能把当前输出自动当作正确标准。
+历史教学记录见 tests/example-results/：错误副本曾输出 39 而非 65，修复后四案通过。
+这些记录仅证明当时的脚本检查，不证明 Qoder 行为或另一台机器通过。
 
-7. 批量重跑固定脚本：
-   python3 check-regression.py --out ../ticket-regression-first
-   使用包外的新目录。查看 regression.json 中的独立预期、实际差异与退出码。
-   example-results/before-fix.json 为受控错误副本的真实 FAIL，after-fix.json 为修复后的四案 PASS。
-   expected/README.txt 记录确认依据；不能把当前输出自动当作正确标准。
-   固定脚本回归不证明 Agent 发现、调用或另一台机器通过；未测环境保持 UNKNOWN。
-
-验证记录（自行填写）：
-产品与版本：
-Skill 版本：
-案例与日期：
-是否选择正确 Skill：
-实际脚本命令和退出码：
-校验状态：
-预期与实际结果是否一致：
-输出文件位置：
-失败或缺口：
+验证记录（自行填写，保存在包外）：
+产品与版本、Skill 版本、案例与日期、实际脚本与退出码、输出位置、预期与实际差异、
+每项 PASS / FAIL / UNKNOWN、失败原因与证据。看不到或未测的耗时、Token 保持未提供。
 
 遇到问题，请联系张坚、李琦，附脱敏输入样例、预期结果和出错截图。
 本包不会联网、发送消息或写回业务系统。

@@ -115,26 +115,38 @@
 <p>本课没有测量生产指标，也没有用工单练习宣称版本收益。想做自动评估时，需要执行工具启动 Agent、收集记录、调用判定规则并汇总；只有 evals 文件夹或一份计划不会自动产生评估结果。</p>
 </section>
 <section id="directories">
-<h2>文件和目录按需要增加</h2>
+<h2>统一目录：tests 放程序测试，evals 放 AI 任务场景</h2>
 <p><code>SKILL.md</code> 留使用说明；<code>references/</code> 放详细规则；<code>scripts/</code> 放处理代码。简单文案 Skill 可以只有入口文件。课件第 6 页的三个脚本名表示职责，参考包用 <code>pipeline.py</code> 合并检查、处理和校验。</p>
-<p>常见做法是：<code>tests/</code> 放程序测试代码与样例，<code>evals/</code> 放 AI 任务场景与判定标准。例如 <code>evals/evals.json</code> 记录任务提示、输入文件、预期结果，再由评估工具或人执行。运行日志与实际输出另存到每轮的新目录，方便比较。</p>
-<p>这些目录是惯例，Agent Skills 格式并不强制它们。当前完整参考包把输入放 <code>fixtures/</code>、答案放 <code>expected/</code>，用 <code>check-regression.py</code> 做程序测试；没有另设 <code>tests/</code> 和 <code>evals/</code>。第四步是通过 Qoder 界面做 AI 任务评估。本页没有提供一键自动运行 Qoder 的评估程序。</p>
+<p>参考包与课件使用同一套目录。<code>tests/</code> 放程序检查、输入样例和已确认答案；<code>evals/</code> 放让 AI 完成的任务与判定标准，直接复用 tests 中的样例和答案。</p>
+<pre>ticket-daily-report/
+├── SKILL.md
+├── references/
+├── scripts/pipeline.py
+├── tests/
+│   ├── check-regression.py
+│   ├── fixtures/
+│   ├── expected/
+│   └── example-results/
+└── evals/
+    ├── evals.json
+    └── README.txt</pre>
+<p>程序测试运行 <code>tests/check-regression.py</code>；AI 任务按 <code>evals/evals.json</code> 在 Qoder 新 Chat 中逐案执行，方法见 <code>evals/README.txt</code>。两种检查的实际结果都另存到包外的新目录。这些扩展目录按需要增加。</p>
 </section>
 <section id="reference-skill">
 <h2>参考包：对照已有实现</h2>
 <p><a href="downloads/practice-kit.zip" download>下载完整参考练习包</a> · <a href="downloads/ticket-daily-report.zip" download>下载现成 Skill ZIP</a></p>
 <p>参考 Skill 名为 <code>ticket-daily-report</code>，包含固定脚本和已确认的预期。它与四步中自己创建的 <code>my-ticket-daily-report</code> 是两个包。需要对照实现时再看；导入参考包属于练习使用现成 Skill。</p>
-<p>参考包的 <code>GUIDE.txt</code> 说明安装方式；<code>fixtures/</code> 放输入，<code>expected/</code> 放已确认的正确答案，<code>example-results/</code> 放失败与修复记录。它们供你对照和检查，不需要在每次任务里都发给 AI。</p>
-<details><summary>技术同事：不经过 Qoder，直接运行参考脚本</summary><p>解压完整包，进入解压根目录。需要 Python 3.9+，只用标准库。读业务规则和 <code>expected/README.txt</code>，然后运行：</p><pre>python3 ticket-daily-report/scripts/pipeline.py \
-  --input fixtures/normal.json --date 2026-10-10 \
+<p>安装方式见完整参考包的 <code>GUIDE.txt</code>，文件按上面的统一目录组织。参考包供对照和检查使用；执行任务时，只给 AI 本案的提示词与输入。</p>
+<details><summary>技术同事：不经过 Qoder，直接运行参考脚本</summary><p>解压完整包，进入其中的 <code>ticket-daily-report</code> 文件夹。需要 Python 3.9+，只用标准库。读业务规则和 <code>tests/expected/README.txt</code>，然后运行：</p><pre>python3 scripts/pipeline.py \
+  --input tests/fixtures/normal.json --date 2026-10-10 \
   --out ../ticket-first-run</pre><p>生成 <code>report.json</code>、<code>report.txt</code> 和 <code>evidence.json</code>。核对独立预期，平均耗时应为 65 分钟。直接跑脚本不需要安装 Skill；这项检查只说明脚本本次执行情况。</p></details>
 </section>
 <section id="regression">
 <h2>修改后，批量重跑已知案例</h2>
 <p>这就是回归检查：修过一个问题后，确认以前能处理的任务仍然正常。既要重跑程序测试，也要重跑受影响的 AI 任务评估。业务同事可以重复第四步；技术同事可以把这些检查自动化。</p>
 <details><summary>技术同事：批量检查参考脚本</summary>
-<p>在完整参考包根目录运行下列命令，输出使用包外的新目录。它检查参考脚本，不会自动检查自己创建的 Skill。</p>
-<pre>python3 check-regression.py --out ../ticket-regression-first</pre>
+<p>进入解压后的 <code>ticket-daily-report</code> 文件夹，运行下列命令，输出使用包外的新目录。它检查参考脚本，不会自动检查自己创建的 Skill。</p>
+<pre>python3 tests/check-regression.py --out ../ticket-regression-first</pre>
 <table><thead><tr><th scope="col">场景</th><th scope="col">输入</th><th scope="col">应看到什么</th></tr></thead><tbody><tr><td>正常</td><td>normal.json，10 月 10 日</td><td>5 单；完成 3、待处理 2；平均 65 分钟</td></tr><tr><td>变化</td><td>changed.json，10 月 11 日</td><td>1 单完成；平均 30 分钟</td></tr><tr><td>应停止</td><td>missing-field.json</td><td>说明缺字段；非零退出；没有成功目录</td></tr><tr><td>应停止</td><td>conflicting-id.json</td><td>说明同一 ID 内容冲突；非零退出；没有成功目录</td></tr></tbody></table>
 <p>打开输出中的 <code>regression.json</code>，查看每案预期、实际和差异。PASS 表示符合本案预期；FAIL 表示不符合；UNKNOWN 表示未测或无法判断。四案通过只覆盖这组脚本案例，Qoder 的发现、调用和停止行为仍需在新 Chat 中验证。</p>
 </details>
@@ -145,9 +157,9 @@
 <h2>为什么还要用独立预期核对</h2>
 <p><strong>独立预期就是运行前确认的正确答案或评审标准。</strong>本例先依据明细和业务规则算出 195 ÷ 3 = 65，再拿这个答案核对实际输出。它可以同时用于程序测试和 AI 任务评估。</p>
 <p>参考包中的受控教学副本曾把平均耗时除以全部 5 单，得到 39 分钟；内部数量检查仍通过。独立预期为 195 ÷ 3 = 65 分钟，批量检查因此报告 FAIL。修正分母后，四案重跑通过。</p>
-<p>原记录在 <code>example-results/before-fix.json</code> 与 <code>after-fix.json</code>。正式参考 Skill 没有注入错误，预期文件也没有为迎合输出而修改。</p>
+<p>原记录在 <code>tests/example-results/</code> 的 <code>before-fix.json</code> 与 <code>after-fix.json</code>。正式参考 Skill 没有注入错误，预期文件也没有为迎合输出而修改。</p>
 <p>遇到错误，修复规则或实现，再用新目录重跑。保留失败记录；业务规则改变时，先确认新口径，再更新预期。</p>
-<p>独立说的是依据。放在 <code>tests/expected/</code>、<code>evals/</code> 或包外都可以。把当前错误输出 39 复制到包外，仍然不是可信答案。评估时只把任务和输入交给受测 AI，正确答案由核对者保留，避免它照着答案交付。</p>
+<p>参考包的已确认答案统一放在 <code>tests/expected/</code>，供程序测试和 AI 任务评估共用。“独立”指答案来自已确认的业务规则。评估时只把任务和输入交给受测 AI，正确答案由核对者保留。</p>
 </section>
 <section id="migration">
 <h2>准备分享时，换一位同事再试</h2>

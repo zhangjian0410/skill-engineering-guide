@@ -14,7 +14,7 @@ try {
  const page=await browser.newPage({viewport:{width:1440,height:1050}});
  const errors=[];page.on('pageerror',error=>errors.push(error.message));
  await page.goto(base+'#slide-02');
- const expected=JSON.parse(await fs.readFile(path.join(root,'practice/fixtures/normal.json'),'utf8'));
+ const expected=JSON.parse(await fs.readFile(path.join(root,'practice/ticket-daily-report/tests/fixtures/normal.json'),'utf8'));
  assert.equal(await page.locator('#slide-02 .sample-table tbody tr').count(),expected.length);
  const rows=await page.locator('#slide-02 .sample-table tbody tr').allTextContents();
  expected.forEach((row,i)=>{assert.ok(rows[i].includes(row.ticket_id));assert.ok(rows[i].includes(row.created_date));});

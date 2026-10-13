@@ -1,9 +1,11 @@
 独立预期：虚构教学工单的固定业务口径
 
 这两份 JSON 是已有 v1.0 练习的确认结果，保留原版本，不从本次 pipeline 输出重新生成。
-依据：ticket-daily-report/references/business-rules.md，尤其是完成工单平均耗时的分母。
+依据：Skill 根目录的 references/business-rules.md，尤其是完成工单平均耗时的分母。
 10 月 10 日：5 单，完成 3 单、待处理 2 单，完成总耗时 195 分钟，平均 195/3=65。
 10 月 11 日：1 单且已完成，总耗时 30 分钟，平均 30/1=30。
 
 正式业务应由业务负责人确认口径和最初预期。规则改变时，说明依据并更新预期版本；
 不能为让失败用例通过，把当前 Skill 的输出直接复制成新标准。
+
+tests/check-regression.py 和 evals/evals.json 共用这些答案；未另存第二套预期。
