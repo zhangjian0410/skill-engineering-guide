@@ -69,11 +69,22 @@ try {
   await page.evaluate(()=>document.exitFullscreen());
   await page.setViewportSize(viewport);
   await page.locator('#fullscreen').click();await page.waitForFunction(()=>!!document.fullscreenElement);
-  for(const slide of data.slides){
+  let frame;
+  for(const slide of [data.cover,...data.slides]){
    await page.goto(base+'#'+slide.id);
-   try{await page.waitForFunction(()=>{const article=document.querySelector('.slide.active'),notes=document.querySelector('.lesson.active .explanation'),a=article.getBoundingClientRect(),n=notes.getBoundingClientRect(),bar=document.querySelector('.deck-controls').getBoundingClientRect();return a.right<=n.left+1&&a.bottom<=bar.top+1&&notes.scrollHeight<=notes.clientHeight+1;});}
+   try{await page.waitForFunction(()=>{const article=document.querySelector('.slide.active'),notes=document.querySelector('.lesson.active .explanation'),a=article.getBoundingClientRect(),n=notes.getBoundingClientRect(),bar=document.querySelector('.deck-controls').getBoundingClientRect(),img=article.querySelector('.fullscreen-preview');return img.complete&&img.naturalWidth===1920&&img.naturalHeight===1080&&Math.min(a.left,n.left)>=0&&Math.max(a.right,n.right)<=innerWidth+1&&(a.right<=n.left+1||a.bottom<=n.top+1)&&Math.max(a.bottom,n.bottom)<=bar.top+1&&notes.scrollHeight<=notes.clientHeight+1&&notes.querySelector('p').scrollWidth<=notes.querySelector('p').clientWidth+1;});}
    catch(error){console.log('Fullscreen failure',viewport,slide.id,await page.evaluate(()=>{const a=document.querySelector('.slide.active'),n=document.querySelector('.lesson.active .explanation');return {screen:[innerWidth,innerHeight],full:!!document.fullscreenElement,slide:a.getBoundingClientRect().toJSON(),notes:n.getBoundingClientRect().toJSON(),controls:document.querySelector('.deck-controls').getBoundingClientRect().toJSON(),notesOverflow:n.scrollHeight-n.clientHeight,scale:a.style.getPropertyValue('--slide-scale')};}));await page.screenshot({path:path.join(out,'fullscreen-failure.png')});throw error;}
    assert.ok(await page.evaluate(()=>document.documentElement.scrollHeight<=innerHeight+1));
+   const box=await page.locator('.slide.active').boundingBox();
+   if(!frame)frame=box;
+   assert.ok(Math.abs(box.width-frame.width)<1&&Math.abs(box.height-frame.height)<1,`every page has the same frame size: ${viewport.width} ${slide.id} ${JSON.stringify({box,frame})}`);
+   assert.ok(Math.abs(box.width/box.height-16/9)<.005,'uncropped 16:9 canvas');
+   const notesBox=await page.locator('.lesson.active .explanation').boundingBox();
+   if(viewport.width>1100)assert.ok(Math.abs(box.y-notesBox.y)<1&&Math.abs(box.height-notesBox.height)<1,'side panels align at both edges');
+   else assert.ok(notesBox.y>=box.y+box.height,'compact fullscreen uses notes below');
+   assert.equal(await page.locator('.lesson.active .explanation p').textContent(),slide.explanation.text);
+   assert.ok(await page.evaluate(()=>[...document.querySelectorAll('.slide a,.slide button,.slide summary')].every(e=>e.tabIndex===-1)),'hidden source controls cannot take focus');
+   if(slide.id==='slide-business-fit'||slide.id==='slide-08'||slide.id===data.cover.id)await page.screenshot({path:path.join(out,`uniform-${viewport.width}-${slide.id}.png`)});
   }
  }
  await page.evaluate(()=>document.exitFullscreen());await page.setViewportSize({width:1440,height:900});await page.locator('#fullscreen').click();await page.waitForFunction(()=>!!document.fullscreenElement);
@@ -81,6 +92,7 @@ try {
  await page.waitForFunction(()=>{const notes=document.querySelector('.lesson.active .explanation');return notes.scrollHeight<=notes.clientHeight+1;});
  await page.screenshot({path:path.join(out,'fullscreen-business-fit.png')});
  await page.evaluate(()=>document.exitFullscreen());
+ await page.waitForFunction(()=>[...document.querySelectorAll('.slide a')].every(e=>e.tabIndex===0));
  await page.setViewportSize({width:1440,height:1050});
  assert.equal(await page.locator('.explanation:visible').count(),1);
  results.push('desktop: cover and all content explanations, controls/order, keyboard, directory, hash, fullscreen PASS');
