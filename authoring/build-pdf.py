@@ -12,7 +12,9 @@ from xml.sax.saxutils import escape
 
 root=Path(__file__).resolve().parent.parent
 data=json.loads((root/'src/content.json').read_text())
-output=root/'dist/downloads/skill-engineering.pdf'
+output_dir=Path(os.environ.get('PDF_OUTPUT_DIR',str(root/'dist/downloads')))
+output_dir.mkdir(parents=True,exist_ok=True)
+output=output_dir/'skill-engineering.pdf'
 c=canvas.Canvas(str(output),pagesize=(960,540))
 c.setTitle(f'Skill Engineering 入门自学课件 v{data["version"]}')
 c.setAuthor('AI 经营交付效能专项组')
@@ -27,7 +29,7 @@ print(f'Wrote {total_pages}-page offline PDF: {output}')
 # Embed a portable CJK font; keep all explanation prose in content.json.
 font=Path(os.environ.get('PDF_CJK_FONT','/System/Library/Fonts/Supplemental/Arial Unicode.ttf'))
 pdfmetrics.registerFont(TTFont('CourseCJK',str(font)))
-notes=root/'dist/downloads/skill-engineering-notes.pdf'
+notes=output_dir/'skill-engineering-notes.pdf'
 c=canvas.Canvas(str(notes),pagesize=A4)
 c.setTitle(f'Skill Engineering 逐页讲解 v{data["version"]}')
 c.setAuthor(data['byline'])
@@ -36,13 +38,27 @@ style=ParagraphStyle('explanation',fontName='CourseCJK',fontSize=12,leading=22,
 width,height=A4
 c.setFillColorRGB(.03,.18,.46)
 c.setFont('CourseCJK',11)
-c.drawString(36,height-42,f'Skill Engineering · 海报封面 · v{data["version"]}')
+c.drawString(36,height-42,f'Skill Engineering · 学习导览 · v{data["version"]}')
+c.setFont('CourseCJK',22)
+c.drawString(36,height-90,'Skill Engineering')
 poster_width=width-72
-poster_height=poster_width*1402/1122
-c.drawImage(ImageReader(str(root/'dist'/data['cover']['image'])),36,height-80-poster_height,
+poster_height=poster_width*9/16
+poster_top=height-130
+c.drawImage(ImageReader(str(root/'build/slides/slide-01.png')),36,poster_top-poster_height,
             width=poster_width,height=poster_height)
-c.linkURL('https://skill-engineering-guide.pages.dev/poster',
-          (36,height-80-poster_height,width-36,height-80),relative=0)
+c.linkURL('https://archer-ai-courses.pages.dev/courses/skill-engineering/poster',
+          (36,poster_top-poster_height,width-36,poster_top),relative=0)
+intro=Paragraph(escape(data['cover']['explanation']['text']),style)
+_,intro_height=intro.wrap(width-72,300)
+intro.drawOn(c,36,poster_top-poster_height-30-intro_height)
+c.setFont('CourseCJK',16)
+c.drawString(36,245,'学习顺序')
+route=Paragraph('普通 Chat 完成任务 → 提炼 Skill → 安装 → 新 Chat 验证',style)
+_,route_height=route.wrap(width-72,100)
+route.drawOn(c,36,223-route_height)
+usage=Paragraph('在线课件看图解，深入阅读做跟练；PPT 备注和这份手册提供逐页讲解。',style)
+_,usage_height=usage.wrap(width-72,100)
+usage.drawOn(c,36,148-usage_height)
 c.setFont('CourseCJK',10)
 c.drawString(36,45,data['byline']);c.drawRightString(width-36,45,f'01 / {total_pages:02d}')
 c.showPage()

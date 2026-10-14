@@ -16,18 +16,24 @@ try {
  const errors=[];page.on('pageerror',error=>errors.push(error.message));
  await page.goto(base+'#slide-02');
  const expected=JSON.parse(await fs.readFile(path.join(root,'practice/ticket-daily-report/tests/fixtures/normal.json'),'utf8'));
- assert.equal(await page.locator('#slide-02 .sample-table tbody tr').count(),expected.length);
- const rows=await page.locator('#slide-02 .sample-table tbody tr').allTextContents();
+ const caseLesson=page.locator('.lesson').filter({has:page.locator('#slide-02')});
+ await caseLesson.locator('.slide-text summary').click();
+ const initialCanvas=await page.locator('#slide-02').boundingBox();
+ assert.equal(await caseLesson.locator('.sample-table tbody tr').count(),expected.length);
+ const rows=await caseLesson.locator('.sample-table tbody tr').allTextContents();
  expected.forEach((row,i)=>{assert.ok(rows[i].includes(row.ticket_id));assert.ok(rows[i].includes(row.created_date));});
- assert.equal(await page.locator('#slide-02 .sample-task .panel-body p').textContent(),
+ assert.equal(await caseLesson.locator('.sample-task .panel-body p').textContent(),
   data.slides.find(slide=>slide.kind==='case').task);
- assert.ok(await page.locator('#slide-02 .sample-output').textContent().then(text=>text.includes('65 分钟')));
+ assert.ok(await caseLesson.locator('.sample-output').textContent().then(text=>text.includes('65 分钟')));
+ await caseLesson.locator('.slide-text summary').click();
+ const closedCanvas=await page.locator('#slide-02').boundingBox();
+ assert.equal(initialCanvas.width,closedCanvas.width);assert.equal(initialCanvas.height,closedCanvas.height);
  results.push('case example: complete seven fixture rows and explicit AI task/report visible PASS');
  await page.goto(base);
  assert.equal(await page.locator('.slide.active').getAttribute('id'),data.cover.id);
- await page.waitForFunction(()=>{const img=document.querySelector('.cover-poster');return img.complete&&img.naturalWidth===1122&&img.naturalHeight===1402;});
+ await page.waitForFunction(()=>{const img=document.querySelector('.kind-cover .fullscreen-preview');return img.complete&&img.naturalWidth===1920&&img.naturalHeight===1080;});
  assert.equal(await page.locator('#page-counter').textContent(),`01 / ${totalPages}`);
- assert.equal(await page.locator('.cover-resources a[download]').getAttribute('href'),data.cover.image);
+ assert.deepEqual(await page.locator('.cover-resources a[download]').evaluateAll(links=>links.map(link=>link.getAttribute('href'))),[data.cover.image,data.cover.originalImage]);
  assert.equal(await page.locator('.reactions a').count(),0);
  await page.screenshot({path:path.join(out,'desktop-cover.png'),fullPage:true});
  await page.locator('#next').click();
@@ -35,7 +41,7 @@ try {
   if(i)await page.locator('#next').click();
   const lesson=page.locator('.lesson.active');
   assert.equal(await lesson.locator('.explanation p').textContent(),data.slides[i].explanation.text);
-  assert.equal(await lesson.locator('.slide h1').textContent(),data.slides[i].title);
+  assert.equal(await lesson.locator('h1').textContent(),data.slides[i].title);
   assert.equal(await page.locator('#page-counter').textContent(),`${String(i+2).padStart(2,'0')} / ${totalPages}`);
   assert.equal(await page.locator('.explanation:visible').count(),1);
   const notesBox=await lesson.locator('.explanation').boundingBox();
@@ -51,6 +57,20 @@ try {
  await page.waitForFunction(()=>document.querySelector('.slide.active')?.id==='slide-04');
  assert.equal(await page.locator('#contents').isVisible(),false);
  await page.goto(base+'#slide-07');
+ for(const viewport of [{width:1440,height:900},{width:1280,height:720},{width:1024,height:768}]){
+  await page.setViewportSize(viewport);let frame;
+  for(const slide of [data.cover,...data.slides]){
+   await page.goto(base+'#'+slide.id);
+   await page.waitForFunction(()=>{const img=document.querySelector('.slide.active .fullscreen-preview');return img.complete&&img.naturalWidth===1920;});
+   const box=await page.locator('.slide.active').boundingBox();if(!frame)frame=box;
+   assert.ok(Math.abs(box.width-frame.width)<1&&Math.abs(box.height-frame.height)<1,'normal desktop has uniform sizes');
+   assert.ok(Math.abs(box.width/box.height-16/9)<.005,'normal desktop has a 16:9 canvas');
+   assert.ok(box.x>=0&&box.x+box.width<=viewport.width,'normal canvas fits window');
+   assert.equal(await page.locator('.lesson.active .explanation p').textContent(),slide.explanation.text);
+   if(slide.id===data.cover.id||slide.id==='slide-business-fit')await page.screenshot({path:path.join(out,`normal-${viewport.width}-${slide.id}.png`)});
+  }
+ }
+ await page.setViewportSize({width:1440,height:1050});await page.goto(base+'#slide-07');
  assert.equal(await page.locator('.slide.active').getAttribute('id'),'slide-07');
  await page.locator('#fullscreen').click();
  await page.waitForFunction(()=>!!document.fullscreenElement);
@@ -83,7 +103,7 @@ try {
    if(viewport.width>1100)assert.ok(Math.abs(box.y-notesBox.y)<1&&Math.abs(box.height-notesBox.height)<1,'side panels align at both edges');
    else assert.ok(notesBox.y>=box.y+box.height,'compact fullscreen uses notes below');
    assert.equal(await page.locator('.lesson.active .explanation p').textContent(),slide.explanation.text);
-   assert.ok(await page.evaluate(()=>[...document.querySelectorAll('.slide a,.slide button,.slide summary')].every(e=>e.tabIndex===-1)),'hidden source controls cannot take focus');
+   assert.ok(await page.evaluate(()=>[...document.querySelectorAll('.slide-text a,.slide-text button,.slide-text summary')].every(e=>e.tabIndex===-1)),'hidden source controls cannot take focus');
    if(slide.id==='slide-business-fit'||slide.id==='slide-08'||slide.id===data.cover.id)await page.screenshot({path:path.join(out,`uniform-${viewport.width}-${slide.id}.png`)});
   }
  }
@@ -92,9 +112,16 @@ try {
  await page.waitForFunction(()=>{const notes=document.querySelector('.lesson.active .explanation');return notes.scrollHeight<=notes.clientHeight+1;});
  await page.screenshot({path:path.join(out,'fullscreen-business-fit.png')});
  await page.evaluate(()=>document.exitFullscreen());
- await page.waitForFunction(()=>[...document.querySelectorAll('.slide a')].every(e=>e.tabIndex===0));
+ await page.waitForFunction(()=>[...document.querySelectorAll('.slide-text a')].every(e=>e.tabIndex===0));
  await page.setViewportSize({width:1440,height:1050});
  assert.equal(await page.locator('.explanation:visible').count(),1);
+ await page.goto(base+'#slide-09');
+ await page.locator('.lesson.active .slide-text>summary').click();
+ await page.locator('.lesson.active .prompt>summary').click();
+ await page.evaluate(()=>Object.defineProperty(navigator,'clipboard',{value:{writeText:async text=>window.copiedFromCourse=text},configurable:true}));
+ await page.locator('[data-copy="feedback"]').click();
+ assert.equal(await page.evaluate(()=>window.copiedFromCourse),await page.locator('#feedback').textContent());
+
  results.push('desktop: cover and all content explanations, controls/order, keyboard, directory, hash, fullscreen PASS');
  await page.setViewportSize({width:390,height:844});
  await page.goto(base);
@@ -128,6 +155,13 @@ try {
  assert.ok(await page.locator('#regression').isVisible());
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  await page.screenshot({path:path.join(out,'mobile-deep.png')});
+ await page.goto(base+'poster.html');
+ await page.waitForFunction(()=>{const img=document.getElementById('landscape-poster-image');return img.complete&&img.naturalWidth===1672&&img.naturalHeight===941;});
+ await page.locator('#poster-image').scrollIntoViewIfNeeded();
+ await page.waitForFunction(()=>{const img=document.getElementById('poster-image');return img.complete&&img.naturalWidth===1122;});
+ assert.equal(await page.getByRole('link',{name:'下载横版 PNG',exact:true}).getAttribute('href'),data.cover.image);
+ assert.equal(await page.getByRole('link',{name:'下载 PNG',exact:true}).getAttribute('href'),data.cover.originalImage);
+ assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  assert.deepEqual(errors,[]);
  results.push('mobile: all cover and all content explanations follow their diagrams; hash and deep reading PASS');
  const nojs=await browser.newPage({javaScriptEnabled:false,viewport:{width:1440,height:1000}});

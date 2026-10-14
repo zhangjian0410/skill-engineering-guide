@@ -12,7 +12,7 @@ target = root / 'dist/assets/slides'
 target.mkdir(parents=True, exist_ok=True)
 digest = lambda file: hashlib.sha256(file.read_bytes()).hexdigest()
 inputs = sorted(set([
-    'src/content.json', 'authoring/build-deck.mjs', 'dist/assets/theme.png',
+    'src/content.json', 'authoring/build-deck.mjs', 'authoring/update-cover.mjs', 'dist/assets/theme.png',
     'dist/' + data['cover']['image'],
     *(slide['sampleFixture'] for slide in data['slides'] if slide.get('sampleFixture')),
 ]))

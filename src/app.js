@@ -3,18 +3,51 @@ const slides=[...document.querySelectorAll('.slide')];
 const mobile=matchMedia('(max-width:850px)');
 const contents=document.getElementById('contents');
 let index=0;
+let beforeFullscreenFocus=null;
+// Keep the original readable HTML as an optional transcript outside the slide canvas.
+const textViews=slides.flatMap(slide=>{
+ const source=slide.querySelector('.slide-content');if(!source)return [];
+ const details=document.createElement('details'),summary=document.createElement('summary');
+ details.className='slide-text '+[...slide.classList].filter(name=>name.startsWith('kind-')).join(' ');
+ summary.textContent='查看课件文字与本页资料';details.append(summary);details.hidden=true;
+ slide.closest('.lesson').append(details);
+ return [{slide,source,details}];
+});
+const savedTextOpen=new Map();
+const coverResources=document.querySelector('.kind-cover .cover-resources');
+if(coverResources)coverResources.closest('.lesson').querySelector('.explanation').append(coverResources);
+function prepareReadingMode(){
+ const fullscreen=!!document.fullscreenElement&&!mobile.matches;
+ for(const {slide,source,details} of textViews){
+  if(mobile.matches){if(source.parentElement!==slide)slide.append(source);details.hidden=true;}
+  else {if(source.parentElement!==details)details.append(source);details.hidden=false;}
+  if(fullscreen){if(!savedTextOpen.has(details))savedTextOpen.set(details,details.open);details.open=true;}
+  else if(savedTextOpen.has(details)){details.open=savedTextOpen.get(details);savedTextOpen.delete(details);}
+ }
+}
 const originalTabindex=new Map();
 function syncSlideFocus(){
  const fullscreen=!!document.fullscreenElement&&!mobile.matches;
- document.querySelectorAll('.slide a,.slide button,.slide summary').forEach(element=>{
+ document.querySelectorAll('.slide a,.slide button,.slide summary,.slide-text a,.slide-text button,.slide-text summary').forEach(element=>{
   if(fullscreen){if(!originalTabindex.has(element))originalTabindex.set(element,element.getAttribute('tabindex'));element.setAttribute('tabindex','-1');}
   else if(originalTabindex.has(element)){const value=originalTabindex.get(element);if(value===null)element.removeAttribute('tabindex');else element.setAttribute('tabindex',value);originalTabindex.delete(element);}
  });
 }
 function hashIndex(){const n=slides.findIndex(slide=>'#'+slide.id===location.hash);return n<0?0:n;}
+function positionContents(){
+ if(!contents||contents.hidden)return;
+ const top=document.getElementById('contents-toggle').getBoundingClientRect().top;
+ contents.style.bottom=`${Math.max(12,innerHeight-top+12)}px`;
+ contents.style.maxHeight=`${Math.max(80,Math.min(innerHeight-24,top-24))}px`;
+}
 function fitFullscreen(){
+ prepareReadingMode();
  syncSlideFocus();
- if(!document.fullscreenElement||mobile.matches||!slides.length)return;
+ if(!document.fullscreenElement||mobile.matches||!slides.length){
+  document.querySelectorAll('.explanation p').forEach(p=>p.style.removeProperty('font-size'));
+  positionContents();
+  return;
+ }
  const lesson=slides[index].closest('.lesson'),notes=lesson.querySelector('.explanation');
  const stage=document.getElementById('stage'),bar=stage.querySelector('.deck-controls');
  const css=getComputedStyle(stage),gap=parseFloat(css.rowGap)||12;
@@ -30,6 +63,7 @@ function fitFullscreen(){
  else lesson.style.setProperty('--notes-height',`${slideHeight}px`);
  const prose=notes.querySelector('p');
  for(let size=20;size>=14;size-=.5){prose.style.fontSize=`${size}px`;if(notes.scrollHeight<=notes.clientHeight+1&&prose.scrollWidth<=prose.clientWidth+1)break;}
+ positionContents();
 }
 function show(n,scroll=false){
  if(!slides.length)return;
@@ -43,7 +77,7 @@ function show(n,scroll=false){
  if(scroll){if(mobile.matches)slides[index].scrollIntoView({block:'start'});else window.scrollTo(0,0);}
 }
 function go(n){const target=Math.max(0,Math.min(slides.length-1,n));history.replaceState(null,'','#'+slides[target].id);show(target,true);}
-async function fullscreen(){try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{const button=document.getElementById('fullscreen');if(button)button.textContent='浏览器未允许全屏';}}
+async function fullscreen(){try{if(document.fullscreenElement)await document.exitFullscreen();else {beforeFullscreenFocus=document.activeElement;await document.documentElement.requestFullscreen();}}catch{const button=document.getElementById('fullscreen');if(button)button.textContent='浏览器未允许全屏';}}
 if(slides.length){
  show(hashIndex());
  if(location.hash&&mobile.matches)slides[index].scrollIntoView({block:'start'});
@@ -51,7 +85,7 @@ if(slides.length){
  document.getElementById('first').addEventListener('click',()=>go(0));
  document.getElementById('next').addEventListener('click',()=>go(index+1));
  const toggle=document.getElementById('contents-toggle');
- toggle.addEventListener('click',()=>{contents.hidden=!contents.hidden;toggle.setAttribute('aria-expanded',String(!contents.hidden));});
+ toggle.addEventListener('click',()=>{contents.hidden=!contents.hidden;toggle.setAttribute('aria-expanded',String(!contents.hidden));positionContents();});
  contents.addEventListener('click',event=>{if(event.target.closest('a')){contents.hidden=true;toggle.setAttribute('aria-expanded','false');}});
  addEventListener('hashchange',()=>{if(location.hash.startsWith('#slide-'))show(hashIndex(),true);});
  document.addEventListener('keydown',event=>{
@@ -63,12 +97,17 @@ if(slides.length){
   if(event.key==='Escape'){contents.hidden=true;toggle.setAttribute('aria-expanded','false');}
  });
  const fsButton=document.getElementById('fullscreen');if(fsButton)fsButton.addEventListener('click',fullscreen);
- mobile.addEventListener('change',()=>show(index));
+ mobile.addEventListener('change',()=>show(index,true));
  addEventListener('resize',fitFullscreen);
  document.addEventListener('fullscreenchange',()=>{
   syncSlideFocus();
   if(!document.fullscreenElement)document.querySelectorAll('.explanation p').forEach(p=>p.style.removeProperty('font-size'));
   fitFullscreen();
+  if(document.fullscreenElement)document.getElementById('contents-toggle').focus({preventScroll:true});
+  else {
+   const target=beforeFullscreenFocus?.isConnected&&beforeFullscreenFocus.getClientRects().length?beforeFullscreenFocus:document.getElementById('contents-toggle');
+   target.focus({preventScroll:true});beforeFullscreenFocus=null;
+  }
  });
  document.fonts?.ready.then(()=>requestAnimationFrame(fitFullscreen));
  const observer=new IntersectionObserver(entries=>{if(!mobile.matches)return;const visible=entries.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio);if(visible.length)show(slides.indexOf(visible[0].target));},{rootMargin:'-5% 0px -55% 0px',threshold:[0,.2,.5]});

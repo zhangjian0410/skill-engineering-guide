@@ -1,0 +1,23 @@
+// Targeted cover edit: import the published deck and preserve its ten body slides.
+import fs from 'node:fs/promises';import path from 'node:path';import {createHash} from 'node:crypto';import {pathToFileURL} from 'node:url';
+import {FileBlob,PresentationFile} from '@oai/artifact-tool';
+const root=path.resolve(import.meta.dirname,'..'),skill=process.env.PRESENTATIONS_SKILL_DIR;
+if(!skill)throw new Error('Set PRESENTATIONS_SKILL_DIR.');
+const source=path.resolve(root,process.env.SOURCE_PPTX||'dist/downloads/skill-engineering.pptx');
+const final=path.resolve(root,process.env.FINAL_PPTX_PATH||`build/final/course-cover-${Date.now()}.pptx`);
+const d=JSON.parse(await fs.readFile(path.join(root,'src/content.json'),'utf8'));
+const p=await PresentationFile.importPptx(await FileBlob.load(source));
+if(p.slides.items.length!==d.slides.length+1)throw new Error('Source slide count does not match the course.');
+const cover=p.slides.items[0],image=cover.images.items[0];if(cover.images.items.length!==1)throw new Error('Expected one cover image.');
+image.replace({blob:await fs.readFile(path.join(root,'dist',d.cover.image)),contentType:'image/png',alt:d.cover.title,fit:'contain'});
+image.frame={left:0,top:0,width:1280,height:720};image.crop={left:0,top:0,right:0,bottom:0};
+const counter=cover.shapes.items.find(shape=>shape.text.toString().startsWith('01 /'));
+if(counter)counter.position={left:1137,top:18,width:96,height:25};
+cover.speakerNotes.text=`${d.cover.explanation.text}\n\n封面：本次重新绘制的横版宣传海报 ${d.cover.image}；沿用已确认的课程框架与蓝白视觉。\n原版图解仍保留在线查看与下载。\n海报：https://archer-ai-courses.pages.dev/courses/skill-engineering/poster\n跟练：https://archer-ai-courses.pages.dev/courses/skill-engineering/deep#${d.cover.explanation.deepAnchor}`;
+await fs.mkdir(path.join(root,'build/slides'),{recursive:true});
+for(const [i,slide] of p.slides.items.entries())await fs.writeFile(path.join(root,`build/slides/slide-${String(i+1).padStart(2,'0')}.png`),new Uint8Array(await (await p.export({slide,format:'png',scale:1.5})).arrayBuffer()));
+const candidate=path.join(root,'build/candidate-cover.pptx');await (await PresentationFile.exportPptx(p)).save(candidate);
+const {finalizePresentation}=await import(pathToFileURL(path.join(skill,'container_tools/artifact_tool_utils.mjs')).href);
+const tableOwners=d.slides.flatMap((slide,i)=>['case','matrix'].includes(slide.kind)?[i+2]:[]);
+const result=await finalizePresentation({workspaceDir:root,candidatePath:candidate,finalPath:final,explicitTotalSlideCount:d.slides.length+1,requiredNativeTableOwnerSlides:tableOwners,requiredNativeChartOwnerSlides:[],fontPolicy:{basis:'reference',families:['Heiti TC'],referencePath:source,referenceSha256:createHash('sha256').update(await fs.readFile(source)).digest('hex')},pythonExecutable:process.env.PYTHON_EXECUTABLE||'python3',integrityValidatorPath:path.join(skill,'container_tools/inspect_presentation_package_integrity.py'),layoutValidatorPath:path.join(skill,'container_tools/inspect_presentation_layout_geometry.py'),layoutArgs:['--expected-slide-size-emu','12192000,6858000','--validate-heading-fit',...tableOwners.flatMap(n=>['--require-native-table-slide',String(n)])],verifyArtifactToolImport:true,receiptPath:path.join(root,'build/cover-edit-validation.json')});
+console.log(JSON.stringify({path:result.finalPath,sha256:result.finalSha256,slides:result.packageIntegrity.slide_count,layout:result.presentationLayout.finding_count}));

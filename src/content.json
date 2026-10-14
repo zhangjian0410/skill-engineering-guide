@@ -6,12 +6,15 @@
   "date": "2026-10-14",
   "cover": {
     "id": "slide-cover",
-    "title": "Skill Engineering 培训系列 · 海报封面",
-    "image": "downloads/poster.png",
+    "title": "Skill Engineering 培训系列 · 横版封面",
+    "image": "downloads/skill-engineering-cover.png",
     "explanation": {
-      "text": "海报展示本次培训的整体框架。后面的十页正文会用工单日报解释方法，补充选择任务和使用边界，再到深入阅读中完成四步跟练。",
+      "text": "从一次真实任务开始，学习把成功的方法沉淀成 Skill。后面的十页正文会用工单日报解释方法，补充选题和使用边界，再到深入阅读完成普通 Chat、提炼 Skill、安装、新 Chat 验证这四步。",
       "deepAnchor": "practice-route"
-    }
+    },
+    "originalImage": "downloads/poster.png",
+    "width": 1672,
+    "height": 941
   },
   "formula": "Skill Engineering = Skill Design + Deterministic Execution + Validation + Evaluation + Reuse",
   "formula_terms": [

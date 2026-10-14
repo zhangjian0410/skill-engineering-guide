@@ -36,8 +36,8 @@ function footer(slide,s,i){
 }
 const cover=p.slides.add();cover.background.fill='#FFFFFF';
 const poster=await fs.readFile(path.join(root,'dist',data.cover.image));
-cover.images.add({blob:poster.buffer.slice(poster.byteOffset,poster.byteOffset+poster.byteLength),contentType:'image/png',alt:data.cover.title,fit:'contain',position:{left:352,top:0,width:576,height:720}});
-text(cover,'page',`01 / ${String(totalPages).padStart(2,'0')}`,1137,685,96,25,16,C.navy,true,'right');
+cover.images.add({blob:poster.buffer.slice(poster.byteOffset,poster.byteOffset+poster.byteLength),contentType:'image/png',alt:data.cover.title,fit:'contain',position:{left:0,top:0,width:1280,height:720}});
+text(cover,'page',`01 / ${String(totalPages).padStart(2,'0')}`,1137,18,96,25,16,C.navy,true,'right');
 cover.speakerNotes.text=`${data.cover.explanation.text}\n\n来源：原版海报 ${data.cover.image}，保留完整画面与比例。\n在线查看：https://skill-engineering-guide.pages.dev/poster\n继续阅读：https://skill-engineering-guide.pages.dev/deep#${data.cover.explanation.deepAnchor}`;
 for(const [i,s] of data.slides.entries()){
  const slide=p.slides.add();slide.background.fill='#FFFFFF';
