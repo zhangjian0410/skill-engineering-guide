@@ -8,8 +8,8 @@
 
 ## 内容与文件
 
-- `dist/`：可直接发布的网站，包含原海报、可编辑十页 PPTX、十页 PDF、同源讲解 PDF 和虚构数据练习包。
-- `src/content.json`：海报封面、九页核心文案与 explanation 讲解源。`style.css` 与 `app.js` 控制网页视觉与阅读行为。
+- `dist/`：可直接发布的网站，包含原海报、可编辑十一页 PPTX、十一页 PDF、同源讲解 PDF 和虚构数据练习包。
+- `src/content.json`：海报封面、十页核心文案与 explanation 讲解源。`style.css` 与 `app.js` 控制网页视觉与阅读行为。
 - `src/prompts.json`：可复制的创建、实践和反馈提示词。`deep-template.html` 是深入阅读的模板。
 - `references/`：原海报、六张原知识课件和最后九页结构摘录。原五期培训安排已按要求排除。
 - `authoring/`：PPTX 和 PDF 的生成源码。
@@ -25,15 +25,15 @@ npm run build
 python3 -m http.server 8765 --directory dist
 ```
 
-浏览器打开 `http://localhost:8765/`。电脑可以翻页、按左右箭头和 F；手机连续阅读海报封面与九页正文。
+浏览器打开 `http://localhost:8765/`。电脑可以翻页、按左右箭头和 F；手机连续阅读海报封面与十页正文。
 
 [自评提示词页面](https://skill-engineering-guide.pages.dev/self-review.html)只需填写 Skill 名称。默认基础筛查，结束后询问是否继续深度；也可直接选择深度。它支持数据处理、写作与分析、流程与工具调用，模型执行的跨平台验收仍未完成。
 
 修改自评提示词时编辑 `prompts/skill-self-review.txt`，版本在 `prompts/metadata.json`，然后运行 `npm run build`。不要直接维护 `dist/self-review.html` 或下载副本。运行 `node --test tests/self-review.test.mjs` 可核对网站复制、下载与单一来源契约；这不代替真实工具中的提示词行为评估。
 
-修改核心文案时，同步重新导出 PPTX/PDF，并逐页检查后更新 `dist/downloads/`。PDF 使用审阅后的十张幻灯片渲染图（封面加九页正文），PPTX 中的核心文字、表格和图解可编辑。
+修改核心文案时，同步重新导出 PPTX/PDF，并逐页检查后更新 `dist/downloads/`。PDF 使用审阅后的十一张幻灯片渲染图（封面加十页正文），PPTX 中的核心文字、表格和图解可编辑。
 
-PPTX 生成使用 Codex 提供的 `@oai/artifact-tool`、Presentations skill 验证工具和选定字体。请在该运行环境中配置 `PRESENTATIONS_SKILL_DIR`、`PYTHON_EXECUTABLE`、`RUNTIME_NODE_MODULES` 及按需配置 `SLIDE_FONT`，然后运行 `node authoring/build-deck.mjs`。最终文件与验证回执默认以新的版本文件名写入 `build/`，不会覆盖发布版；检查后再复制到下载目录。PDF 导出需要 `reportlab` 和可嵌入的 CJK 字体，运行 `python3 authoring/build-pdf.py`，同时生成十页图解 PDF 与十页讲解手册（封面加九页正文）。可用 `PDF_CJK_FONT` 配置字体路径。
+PPTX 生成使用 Codex 提供的 `@oai/artifact-tool`、Presentations skill 验证工具和选定字体。请在该运行环境中配置 `PRESENTATIONS_SKILL_DIR`、`PYTHON_EXECUTABLE`、`RUNTIME_NODE_MODULES` 及按需配置 `SLIDE_FONT`，然后运行 `node authoring/build-deck.mjs`。最终文件与验证回执默认以新的版本文件名写入 `build/`，不会覆盖发布版；检查后再复制到下载目录。PDF 导出需要 `reportlab` 和可嵌入的 CJK 字体，运行 `python3 authoring/build-pdf.py`，同时生成十一页图解 PDF 与十一页讲解手册（封面加十页正文）。可用 `PDF_CJK_FONT` 配置字体路径。
 
 ## 发布与静态资料备份
 
@@ -47,7 +47,7 @@ npm run package
 
 本仓库沿用已有 Actions secrets 中的 `CLOUDFLARE_ACCOUNT_ID` 和 `CLOUDFLARE_API_TOKEN`，使用当前账户的 Pages Edit 权限。不复制或公开 Token，不在 CI 执行生产数据库迁移。Portal 自身修改通过 Cloudflare Git integration 发布，不需要将当前 Token 再保存到 Portal 仓库。
 
-自动部署构建网页与练习包，不重新生成 PPTX 和两份 PDF。修改九页核心文案时，仍需按上面的导出步骤更新并提交下载文件，再推送发布。
+自动部署构建网页与练习包，不重新生成 PPTX 和两份 PDF。修改十页核心文案时，仍需按上面的导出步骤更新并提交下载文件，再推送发布。
 
 ## 课程入口、海报与交流
 
@@ -55,7 +55,7 @@ npm run package
 
 旧站点的课件、深入阅读、自评、海报和 `/courses` 通过 `functions/_middleware.js` 跳转到对应新入口，保留主题锚点。原下载地址继续提供同一份资料。旧匿名 Cookie 通过两分钟有效、一次性凭据迁移到新入口；已有新入口 Cookie 时优先保留其身份，不合并不同匿名身份。清空 `PORTAL_ORIGIN` 可暂时恢复本地静态页面；若要恢复旧站完整业务后台，应回退到迁移前提交，当前兼容层没有第二份留言/统计实现。
 
-原版海报作为新增第 1 页完整展示，后接原有九页正文；网页版、PPTX、课件 PDF 和讲解 PDF 共十页。封面保留在线放大和 PNG 下载入口，课程资料中的独立在线海报页仍可使用。课件导航区的“第一页”和键盘 Home 返回海报封面；“课程首页”返回选课入口，全屏内也可使用。目录和显示页码按十页顺序排列。原有 `#slide-01` 至 `#slide-09` 地址仍指向原正文主题，新增封面地址为 `#slide-cover`，课程入口由封面开始。深入阅读的正文页码同步加一。
+原版海报作为新增第 1 页完整展示，后接原有十页正文；网页版、PPTX、课件 PDF 和讲解 PDF 共十一页。封面保留在线放大和 PNG 下载入口，课程资料中的独立在线海报页仍可使用。课件导航区的“第一页”和键盘 Home 返回海报封面；“课程首页”返回选课入口，全屏内也可使用。目录和显示页码按十一页顺序排列。原有 `#slide-01` 至 `#slide-09` 地址仍指向原正文主题，新增封面地址为 `#slide-cover`，课程入口由封面开始。深入阅读的正文页码同步加一。
 
 课件及深入阅读的交流区共用本门课的点赞、拍砖和留言。无需登录或实名，称呼和联系方式均选填；称呼与留言公开，联系方式只存入 D1，公开 API 不返回该字段。讲师可在 Cloudflare → Storage & databases → D1 → `ai-course-community` → Explore Data 查看 `comments` 表；不要把数据库查询结果或联系方式提交到 GitHub。可在同一后台删除不适当的留言。近期公开列表显示最新 30 条。
 
@@ -65,7 +65,7 @@ npm run package
 
 当前账户使用 Workers Free，功能沿免费额度运行，不自动升级付费套餐；额度用尽时，互动及统计可能暂时不可用，课件静态内容仍可阅读。相关额度以 Cloudflare 当前计划为准。
 
-Portal 仓库使用固定 Wrangler 4.149.0 验证共享 API、隐私、去重、限流、持久化与一次性交接。使用 `LEGACY_SOURCE_DIR` 指向本仓库可核对真实旧网址桥接；所有合成留言只在隔离本地 D1 运行。课程独立预览继续用 `tests/course-browser.mjs` 验证十页导航、封面、全屏和讲解；完整同源网页检查位于 Portal 的 `tests/portal-browser.mjs`。
+Portal 仓库使用固定 Wrangler 4.149.0 验证共享 API、隐私、去重、限流、持久化与一次性交接。使用 `LEGACY_SOURCE_DIR` 指向本仓库可核对真实旧网址桥接；所有合成留言只在隔离本地 D1 运行。课程独立预览继续用 `tests/course-browser.mjs` 验证十一页导航、封面、全屏和讲解；完整同源网页检查位于 Portal 的 `tests/portal-browser.mjs`。
 
 `deep` 跟练页从未安装自己的日报 Skill 开始，顺序为普通 Chat、提炼、安装、新 Chat 验证。维护 `src/deep-template.html` 和 `src/prompts.json` 中的 `deep-*` 提示词；独立输入下载从 `practice/ticket-daily-report/tests/fixtures/` 生成，现成参考 Skill 留在进阶部分。
 
@@ -124,3 +124,11 @@ Deep 与第 9 页补齐准备材料、确认计划、生成文件、实际运行
 ## v2.7 · 海报封面与入口可见性
 
 新增完整原版海报封面，移除点赞、拍砖旁的海报链接，保留在线查看和 PNG 下载；网页、PPTX 及两份 PDF 同步十页。课程首页标题取消强制换行，电脑尽量一行、手机按短语换行；访问统计保留在顶部导航。课件菜单按课程首页、深入阅读、自评、海报与资料下载排列，全屏按钮置于末尾。旧版本记录的页码按当时九页结构记载。
+
+## v2.8 · 选题与使用边界
+
+新增业务判断页，放在 Chat、Skill、Skill Engineering 之后，网页、PPTX 和两份 PDF 同步十一页。四个问题为选题、执行条件、验收和长期投入；深入阅读在四步之后使用同一源文案展开，工具术语留在默认收起的补充说明。API、CLI、浏览器、MCP 和 function calling 只介绍用途与关系，具体接入和成本优化留给可能的后续专题。
+
+原有正文保留稳定主题 ID，插入新页不会改变 slide-01 至 slide-09 的含义；新页为 slide-business-fit。Deep 对应页码和目录数量随源数据生成。现有四步提示词、工单实现、样例、可信答案和历史 Qoder 记录不变；没有新增系统接入实操、真实成本测量或收益承诺。
+
+电脑全屏使用课件与讲解左右并排，按窗口尺寸适配并保持完整显示，翻页时同步切换。普通阅读和手机连续阅读仍沿用原布局。新增内容由 content.json 同源生成，下载文件在作者环境导出并验证后提交。

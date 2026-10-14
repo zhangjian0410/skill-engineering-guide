@@ -1,8 +1,8 @@
 {
   "name": "skill-engineering-guide",
-  "version": "2.7.0",
+  "version": "2.8.0",
   "private": true,
-  "description": "Skill Engineering 十页自学课件（海报封面加九页正文）",
+  "description": "Skill Engineering 十一页自学课件（海报封面加十页正文）",
   "engines": {
     "node": ">=22.16"
   },

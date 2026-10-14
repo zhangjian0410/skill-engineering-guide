@@ -48,7 +48,11 @@ for(const [i,s] of data.slides.entries()){
  if(s.kind==='before-after'){
   s.panels.forEach((q,j)=>{const x=48+j*622;panel(slide,`panel-${j}`,q.label,x,254,562,312);q.items.forEach(([a,b],k)=>{const y=316+k*60;text(slide,`item-${j}-${k}-title`,a,x+22,y,518,27,23,C.navy,true);text(slide,`item-${j}-${k}-body`,b,x+22,y+28,518,26,18,C.muted);});});arrow(slide,622,389,36,44);
  }
+ if(s.kind==='business-fit'){
+  s.cards.forEach((q,j)=>{const x=48+(j%2)*610,y=250+Math.floor(j/2)*174;shape(slide,`business-${j}`,x,y,574,152);text(slide,`business-${j}-title`,`${j+1}. ${q.label}`,x+20,y+18,534,36,26,C.navy,true);text(slide,`business-${j}-sub`,q.sub,x+20,y+63,534,31,22,C.blue,true);text(slide,`business-${j}-body`,q.body,x+20,y+107,534,36,20,C.muted);});
+ }
  if(s.kind==='case'){
+
   const example=await loadTicketExample(root,s.sampleFixture);
   text(slide,'input-label',s.input_label,48,250,590,30,23,C.blue,true);
   table(slide,'case-table',example.table,48,292,590,[95,176,135,184],[36,...example.rows.map(()=>33)],18,6);
@@ -103,5 +107,6 @@ const candidate=path.join(root,'build/candidate.pptx');await (await Presentation
 const exportName=`skill-engineering-${Date.now()}`;
 const finalPath=path.resolve(root,process.env.FINAL_PPTX_PATH||`build/final/${exportName}.pptx`);
 await fs.mkdir(path.dirname(finalPath),{recursive:true});
-const result=await finalizePresentation({workspaceDir:root,candidatePath:candidate,finalPath,explicitTotalSlideCount:totalPages,requiredNativeTableOwnerSlides:[3,6],requiredNativeChartOwnerSlides:[],fontPolicy:{basis:'design',families:[font]},pythonExecutable:process.env.PYTHON_EXECUTABLE||'python3',integrityValidatorPath:path.join(skill,'container_tools/inspect_presentation_package_integrity.py'),layoutValidatorPath:path.join(skill,'container_tools/inspect_presentation_layout_geometry.py'),layoutArgs:['--expected-slide-size-emu','12192000,6858000','--validate-heading-fit','--require-native-table-slide','3','--require-native-table-slide','6'],verifyArtifactToolImport:true,receiptPath:path.join(root,`build/${exportName}-validation.json`)});
+const tableOwners=data.slides.flatMap((s,i)=>['case','matrix'].includes(s.kind)?[i+2]:[]);
+const result=await finalizePresentation({workspaceDir:root,candidatePath:candidate,finalPath,explicitTotalSlideCount:totalPages,requiredNativeTableOwnerSlides:tableOwners,requiredNativeChartOwnerSlides:[],fontPolicy:{basis:'design',families:[font]},pythonExecutable:process.env.PYTHON_EXECUTABLE||'python3',integrityValidatorPath:path.join(skill,'container_tools/inspect_presentation_package_integrity.py'),layoutValidatorPath:path.join(skill,'container_tools/inspect_presentation_layout_geometry.py'),layoutArgs:['--expected-slide-size-emu','12192000,6858000','--validate-heading-fit',...tableOwners.flatMap(n=>['--require-native-table-slide',String(n)])],verifyArtifactToolImport:true,receiptPath:path.join(root,`build/${exportName}-validation.json`)});
 console.log(JSON.stringify({path:result.finalPath,sha256:result.finalSha256,slides:result.packageIntegrity.slide_count,layout:result.presentationLayout.finding_count}));
