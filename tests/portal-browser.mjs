@@ -17,7 +17,7 @@ try {
   assert.equal(await page.locator('.course-row').count(), 1);
   const phraseTops=await page.locator('.portal-intro h1 span').evaluateAll(spans=>spans.map(span=>span.getBoundingClientRect().top));
   assert.equal(phraseTops[0],phraseTops[1],'desktop headline fits a single line');
-  await page.locator('.metrics-entry').click();
+  await page.getByRole('link', {name: '访问统计', exact: true}).click();
   assert.ok(await page.locator('#metrics-title').isVisible());
   assert.ok(await page.locator('#metrics-title').evaluate(el=>el.getBoundingClientRect().top>=0&&el.getBoundingClientRect().bottom<innerHeight));
   await page.getByRole('link',{name:'课程目录',exact:true}).click();
@@ -98,7 +98,7 @@ try {
     await page.setViewportSize({width, height: 844}); await page.goto(base + 'courses.html');
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
     await page.screenshot({path: path.join(out, `courses-mobile-${width}.png`), fullPage: true});
-    await page.locator('.metrics-entry').click();
+    await page.getByRole('link', {name: '访问统计', exact: true}).click();
     assert.ok(await page.locator('#metrics-title').evaluate(el=>el.getBoundingClientRect().top>=0&&el.getBoundingClientRect().bottom<innerHeight));
     await page.goto(base + 'poster.html');
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
