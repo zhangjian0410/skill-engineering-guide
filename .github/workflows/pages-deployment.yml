@@ -38,10 +38,24 @@ jobs:
         run: |
           node --test tests/self-review.test.mjs
           python3 tests/regression-checker.py
-      - name: Check anonymous interaction and metrics API with isolated local D1
+      - name: Check out the independent Portal
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          repository: zhangjian0410/ai-training-portal
+          ref: main
+          path: portal
+          persist-credentials: false
+      - name: Record Portal revision
+        id: portal-source
+        run: echo "revision=$(git -C portal rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Assemble course into Portal and check the canonical backend
         env:
           WRANGLER_SEND_METRICS: 'false'
-        run: node --test tests/community-api.test.mjs
+        run: |
+          COURSE_SOURCE_DIR="$GITHUB_WORKSPACE" SKIP_COURSE_BUILD=1 PORTAL_REVISION="$(git -C portal rev-parse HEAD)" npm --prefix portal run build
+          npm --prefix portal run check
+          cd portal
+          node --test tests/community-api.test.mjs tests/handoff.test.mjs
       - name: Check deployment credentials
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -51,7 +65,15 @@ jobs:
             echo "::error::Set CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID in this repository's Actions secrets."
             exit 1
           fi
-      - name: Deploy to existing Pages project
+      - name: Publish the assembled Portal first
+        uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '4.149.0'
+          workingDirectory: portal
+          command: pages deploy dist --project-name=ai-training-portal --branch=main --commit-hash=${{ steps.portal-source.outputs.revision }}
+      - name: Publish legacy compatibility after Portal succeeds
         uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}

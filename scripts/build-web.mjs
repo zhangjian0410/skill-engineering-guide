@@ -57,5 +57,5 @@ let portal=await fs.readFile(path.join(root,'src/courses-template.html'),'utf8')
 portal=portal.replaceAll('{{SITE_TITLE}}',e(catalog.title)).replaceAll('{{SITE_DESCRIPTION}}',e(catalog.description)).replaceAll('{{COURSE_ROWS}}',courseRows);
 await fs.writeFile(path.join(root,'dist/courses.html'),portal);
 await fs.copyFile(path.join(root,'src/poster-template.html'),path.join(root,'dist/poster.html'));
-await fs.writeFile(path.join(root,'dist/_routes.json'),JSON.stringify({version:1,include:['/api/*'],exclude:[]},null,2)+'\n');
+await fs.writeFile(path.join(root,'dist/_routes.json'),JSON.stringify({version:1,include:['/api/*','/','/index','/index.html','/courses','/courses.html','/deep','/deep.html','/self-review','/self-review.html','/poster','/poster.html'],exclude:[]},null,2)+'\n');
 console.log('Built ten-page deck including the original poster cover with explanations, deeper reading and the single-source self-review tool.');

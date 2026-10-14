@@ -1,7 +1,18 @@
 {
   "version": 1,
   "include": [
-    "/api/*"
+    "/api/*",
+    "/",
+    "/index",
+    "/index.html",
+    "/courses",
+    "/courses.html",
+    "/deep",
+    "/deep.html",
+    "/self-review",
+    "/self-review.html",
+    "/poster",
+    "/poster.html"
   ],
   "exclude": []
 }
