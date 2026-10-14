@@ -2,7 +2,7 @@
   "name": "skill-engineering-guide",
   "pages_build_output_dir": "dist",
   "compatibility_date": "2026-10-13",
-  "vars": {"PORTAL_ORIGIN":"https://ai-training-portal.pages.dev"},
+  "vars": {"PORTAL_ORIGIN":"https://archer-ai-courses.pages.dev"},
   "d1_databases": [
     {
       "binding": "COURSE_DB",

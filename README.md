@@ -51,7 +51,7 @@ npm run package
 
 ## 课程入口、海报与交流
 
-统一入口为 [AI 实践课程](https://ai-training-portal.pages.dev/)，本课正式路径是 `/courses/skill-engineering/`。新增课程在 Portal 的 `src/courses.json` 登记其独立公开仓库；本仓库只维护本门课。`src/courses.json` 与 `courses.html` 留作独立静态预览，线上选课入口由 Portal 统一维护。
+统一入口为 [AI 实践课程](https://archer-ai-courses.pages.dev/)，本课正式路径是 `/courses/skill-engineering/`。新增课程在 Portal 的 `src/courses.json` 登记其独立公开仓库；本仓库只维护本门课。`src/courses.json` 与 `courses.html` 留作独立静态预览，线上选课入口由 Portal 统一维护。
 
 旧站点的课件、深入阅读、自评、海报和 `/courses` 通过 `functions/_middleware.js` 跳转到对应新入口，保留主题锚点。原下载地址继续提供同一份资料。旧匿名 Cookie 通过两分钟有效、一次性凭据迁移到新入口；已有新入口 Cookie 时优先保留其身份，不合并不同匿名身份。清空 `PORTAL_ORIGIN` 可暂时恢复本地静态页面；若要恢复旧站完整业务后台，应回退到迁移前提交，当前兼容层没有第二份留言/统计实现。
 

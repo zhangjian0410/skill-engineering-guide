@@ -72,7 +72,7 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: '4.149.0'
           workingDirectory: portal
-          command: pages deploy dist --project-name=ai-training-portal --branch=main --commit-hash=${{ steps.portal-source.outputs.revision }}
+          command: pages deploy dist --project-name=archer-ai-courses --branch=main --commit-hash=${{ steps.portal-source.outputs.revision }}
       - name: Publish legacy compatibility after Portal succeeds
         uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4
         with:
