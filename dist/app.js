@@ -3,6 +3,38 @@ const slides=[...document.querySelectorAll('.slide')];
 const mobile=matchMedia('(max-width:850px)');
 const contents=document.getElementById('contents');
 let index=0;
+let previewGeneration=0;
+const previewLoads=new WeakMap();
+function loadPreview(slide,priority='low'){
+ const image=slide?.querySelector('.fullscreen-preview');
+ if(!image)return Promise.resolve();
+ if(priority==='high')image.fetchPriority='high';
+ if(previewLoads.has(image))return previewLoads.get(image);
+ const status=slide.querySelector('.preview-status');
+ image.fetchPriority=priority;image.loading='eager';
+ status.hidden=false;status.textContent='正在加载课件…';
+ image.src=image.dataset.src;
+ const loaded=image.decode().then(()=>{status.hidden=true;}).catch(()=>{
+  previewLoads.delete(image);status.hidden=false;
+  status.textContent='课件图片暂时无法加载，请刷新页面重试。';
+  throw new Error('Slide preview unavailable');
+ });
+ previewLoads.set(image,loaded);return loaded;
+}
+function preparePreviews(){
+ const generation=++previewGeneration;
+ if(mobile.matches)return;
+ const current=index;
+ loadPreview(slides[current],'high').then(async()=>{
+  const connection=navigator.connection;
+  if(connection?.saveData||['slow-2g','2g'].includes(connection?.effectiveType))return;
+  // Warm a small reading window, without competing with the current page.
+  for(const n of [current+1,current+2,current-1]){
+   if(generation!==previewGeneration||mobile.matches)return;
+   if(slides[n])await loadPreview(slides[n]);
+  }
+ }).catch(()=>{});
+}
 let beforeFullscreenFocus=null;
 // Keep the original readable HTML as an optional transcript outside the slide canvas.
 const textViews=slides.flatMap(slide=>{
@@ -74,6 +106,7 @@ function show(n,scroll=false){
  document.getElementById('first').disabled=index===0;
  document.getElementById('next').disabled=index===slides.length-1;
  fitFullscreen();
+ preparePreviews();
  if(scroll){if(mobile.matches)slides[index].scrollIntoView({block:'start'});else window.scrollTo(0,0);}
 }
 function go(n){const target=Math.max(0,Math.min(slides.length-1,n));history.replaceState(null,'','#'+slides[target].id);show(target,true);}

@@ -1,4 +1,4 @@
-"""Publish lossless WebP previews of the reviewed PPT renders, without changing the deck."""
+"""Publish high-quality WebP previews of reviewed PPT renders; keep native downloads intact."""
 from pathlib import Path
 import hashlib
 import json
@@ -21,6 +21,7 @@ manifest = {
     'pptxSha256': digest(root / 'dist/downloads/skill-engineering.pptx'),
     'sourceSha256': {file: digest(root / file) for file in inputs},
     'size': [1920, 1080],
+    'encoding': {'format': 'webp', 'quality': 95},
     'slides': [],
 }
 for number, slide_id in enumerate(ids, 1):
@@ -29,7 +30,9 @@ for number, slide_id in enumerate(ids, 1):
     with Image.open(source) as image:
         if image.size != (1920, 1080):
             raise ValueError(f'Unexpected slide size: {source}: {image.size}')
-        image.save(file, 'WEBP', lossless=True, method=6)
+        image.convert('RGB').save(file, 'WEBP', quality=95, method=6)
     manifest['slides'].append({'id': slide_id, 'src': f'assets/slides/{file.name}', 'sha256': digest(file)})
 (target / 'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
-print(f'Exported {len(ids)} lossless 16:9 previews from the reviewed PPT renders.')
+with Image.open(root / 'dist/assets/theme.png') as image:
+    image.convert('RGB').save(root / 'dist/assets/theme.webp', 'WEBP', quality=95, method=6)
+print(f'Exported {len(ids)} high-quality 16:9 previews from the reviewed PPT renders.')

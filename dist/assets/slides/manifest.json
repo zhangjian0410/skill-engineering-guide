@@ -13,61 +13,65 @@
     1920,
     1080
   ],
+  "encoding": {
+    "format": "webp",
+    "quality": 95
+  },
   "slides": [
     {
       "id": "slide-cover",
       "src": "assets/slides/slide-cover.webp",
-      "sha256": "f4a47cf83ee526eb1c812522ebaaac171a3b6866ee37f6b7444c92b69c61a3a8"
+      "sha256": "7aa08691e10e6c88b9d576efe6057fba09e2b7933b64420b06951af40ec513af"
     },
     {
       "id": "slide-01",
       "src": "assets/slides/slide-01.webp",
-      "sha256": "a08780a77620ab9ad206e4499c327151cce7515390cc635f31209c311f20030e"
+      "sha256": "d4ac9935fbba5aa57839b47d4c7200152709fbf757fa3c40caa76522eb13ca32"
     },
     {
       "id": "slide-02",
       "src": "assets/slides/slide-02.webp",
-      "sha256": "d4844b79f7e908cfb23af1f6e4fc5feef3695f4d95e7b8d76882b3ddf1092e09"
+      "sha256": "54ddff4ddddec8a0bb76f59df98dbea6046641f95db4f252614b316b752c2112"
     },
     {
       "id": "slide-03",
       "src": "assets/slides/slide-03.webp",
-      "sha256": "ec3c9dd0e1b5fd8a54652f8546426527590c13624b7fdd1a8d8061aa4625c00c"
+      "sha256": "27c864d75066ade456bbd724a59eb76f11c87951ff3c8178744d2e3f2a377661"
     },
     {
       "id": "slide-business-fit",
       "src": "assets/slides/slide-business-fit.webp",
-      "sha256": "659afbba70a786aa013c6ff42acec345ddf72628b8d62508a6d2baad1ddecf28"
+      "sha256": "826ea56e667b226f239d081896ba3ebf3655e1c71bb098eeb42d80090c79ea7a"
     },
     {
       "id": "slide-04",
       "src": "assets/slides/slide-04.webp",
-      "sha256": "a807f9b820f54074dc0d9c8d0487b53627a0f098dcd250152abd4e49403e07cc"
+      "sha256": "eca686195bf189090e72f7af926e642a507417b1cee1401a2f8b85498cdc08a4"
     },
     {
       "id": "slide-05",
       "src": "assets/slides/slide-05.webp",
-      "sha256": "a2f607a194c06a4f91aff4ddf728a41b32db359692d89a4195479ab47dfc31b4"
+      "sha256": "4c408db2169b9bed2ed9da996a24825a2da8fe2dde0e28714b180d87790a52bc"
     },
     {
       "id": "slide-06",
       "src": "assets/slides/slide-06.webp",
-      "sha256": "001b9de5898e19e15b9ac8b196e01a7bf473ddeb6a38f4e9f67e393c436ae465"
+      "sha256": "41a515ff02ee6bbc6ecaff644c58b30bdf95256429510ee9bf68056f67a9376a"
     },
     {
       "id": "slide-07",
       "src": "assets/slides/slide-07.webp",
-      "sha256": "288d13ced9c97de6ecc2a63db6026a22c3ae8e566e81ebd74501219517f648f1"
+      "sha256": "fbd3b8536df3d32a9541081c223515f7af49d92afa4a4d565dbcded73e781214"
     },
     {
       "id": "slide-08",
       "src": "assets/slides/slide-08.webp",
-      "sha256": "8d7cc0b15572e3470996c998a812d15699d35555119496e71d27a624718ec733"
+      "sha256": "2776af2aa796328908768db82ac42d6d621a9e9c199bac2ffce92339d8fabcba"
     },
     {
       "id": "slide-09",
       "src": "assets/slides/slide-09.webp",
-      "sha256": "8e9d5bfd0c0cea7d7c6d7359d477337324ee3e1e91ce393e14ebb50bf1189b1e"
+      "sha256": "5cf2d08566f85f56cf20bf85f1f3479658b6040a54fe0b22247c849607734e78"
     }
   ]
 }

@@ -62,7 +62,8 @@ test('local routes on all three pages resolve to actual public files',()=>{
     const html=fs.readFileSync(path.join(root,'dist',page),'utf8');
     for(const [,url] of html.matchAll(/(?:href|src)="([^"]+)"/g)) {
       if(url.startsWith('#')||/^https?:/.test(url))continue;
-      const file=url.split('#')[0];assert.ok(fs.existsSync(path.join(root,'dist',file)),`${page}: ${url}`);
+      const file=decodeURIComponent(new URL(url,'https://course.invalid/').pathname).slice(1);
+      assert.ok(fs.existsSync(path.join(root,'dist',file)),`${page}: ${url}`);
     }
     assert.ok(html.includes('self-review.html')||page==='self-review.html');
   }
