@@ -55,7 +55,7 @@ jobs:
           COURSE_SOURCE_DIR="$GITHUB_WORKSPACE" SKIP_COURSE_BUILD=1 PORTAL_REVISION="$(git -C portal rev-parse HEAD)" npm --prefix portal run build
           npm --prefix portal run check
           cd portal
-          node --test tests/community-api.test.mjs tests/handoff.test.mjs
+          npm test
       - name: Check deployment credentials
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
