@@ -9,7 +9,7 @@
       "audience": "面向业务同事，也供技术同事进阶参考",
       "format": "11 页课件（含海报封面）· 四步跟练",
       "slides": "index.html#slide-cover",
-      "practice": "deep.html#ticket-practice",
+      "practice": "practice.html#start",
       "reading": "deep.html",
       "review": "self-review.html",
       "poster": "poster.html"

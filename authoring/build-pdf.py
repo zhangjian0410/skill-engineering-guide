@@ -22,6 +22,8 @@ total_pages=len(data['slides'])+1
 for i in range(1,total_pages+1):
     # Embed the exact reviewed slide render. No image editing or new drawings.
     c.drawImage(ImageReader(str(root/f'build/slides/slide-{i:02d}.png')),0,0,width=960,height=540)
+    item=data['cover'] if i==1 else data['slides'][i-2]
+    c.linkURL('https://archer-ai-courses.pages.dev/courses/skill-engineering/'+item['explanation']['link']['href'],(0,0,960,540),relative=0)
     c.showPage()
 c.save()
 print(f'Wrote {total_pages}-page offline PDF: {output}')
@@ -56,7 +58,7 @@ c.drawString(36,245,'学习顺序')
 route=Paragraph('普通 Chat 完成任务 → 提炼 Skill → 安装 → 新 Chat 验证',style)
 _,route_height=route.wrap(width-72,100)
 route.drawOn(c,36,223-route_height)
-usage=Paragraph('在线课件看图解，深入阅读做跟练；PPT 备注和这份手册提供逐页讲解。',style)
+usage=Paragraph('看课件了解目标，到“动手做”完成基础四步。深入阅读讲原理，进阶跟练选做；PPT 备注和本手册提供逐页讲解。',style)
 _,usage_height=usage.wrap(width-72,100)
 usage.drawOn(c,36,148-usage_height)
 c.setFont('CourseCJK',10)
@@ -79,8 +81,8 @@ for i,s in enumerate(data['slides'],1):
     _,h=explanation.wrap(width-72,250)
     explanation.drawOn(c,36,y-18-h)
     c.setFont('CourseCJK',10)
-    c.drawString(36,89,'继续阅读与实践：点击打开在线深入阅读')
-    c.linkURL('https://skill-engineering-guide.pages.dev/deep.html#'+s['explanation']['deepAnchor'],
+    c.drawString(36,89,s['explanation']['link']['label'])
+    c.linkURL('https://archer-ai-courses.pages.dev/courses/skill-engineering/'+s['explanation']['link']['href'],
               (36,85,width-36,103),relative=0)
     c.setFillColorRGB(.32,.45,.67)
     c.drawString(36,45,data['byline']);c.drawRightString(width-36,45,f'{i+1:02d} / {total_pages:02d}')

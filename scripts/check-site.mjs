@@ -20,7 +20,7 @@ for(const name of await htmlPages(dist)){
  assert.equal(new Set(ids).size,ids.length,`${name}: duplicate ID`);
  pages.set(name,{html,ids:new Set(ids)});
 }
-for(const name of ['index.html','deep.html','self-review.html','courses.html','poster.html'])assert.ok(pages.has(name),`${name}: required page missing`);
+for(const name of ['index.html','deep.html','practice.html','advanced.html','self-review.html','courses.html','poster.html'])assert.ok(pages.has(name),`${name}: required page missing`);
 let checked=0;
 // Keep published deep links working when the walkthrough is reorganized.
 for(const id of ['practice-route','ticket-practice','qoder','practice','create','regression','regression-plan','repair-demo','migration','validation-scope','maturity','directories','feedback','feedback-prompt']){

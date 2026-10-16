@@ -3,6 +3,8 @@ const destinations={
  '/':'/courses/skill-engineering/', '/index':'/courses/skill-engineering/', '/index.html':'/courses/skill-engineering/',
  '/courses':'/', '/courses.html':'/',
  '/deep':'/courses/skill-engineering/deep', '/deep.html':'/courses/skill-engineering/deep',
+ '/practice':'/courses/skill-engineering/practice', '/practice.html':'/courses/skill-engineering/practice',
+ '/advanced':'/courses/skill-engineering/advanced', '/advanced.html':'/courses/skill-engineering/advanced',
  '/self-review':'/courses/skill-engineering/self-review', '/self-review.html':'/courses/skill-engineering/self-review',
  '/poster':'/courses/skill-engineering/poster', '/poster.html':'/courses/skill-engineering/poster'
 };

@@ -1,13 +1,13 @@
 {
-  "contentSha256": "a733f7f3631b0980ea7d0ac7bba82449f0b52702b49d921a0d776c394927d8c9",
-  "pptxSha256": "8d6e7d4a354c9470271522f622487baae62febae594cec339dc4179e63292a69",
+  "contentSha256": "57db257b6abf7ce0f28bf38022c6763d217536a21087fcf6bfc6753dd9c72881",
+  "pptxSha256": "263bdac6ecbfa8abad3ae580a2cf11a9538f6a8320b1a0cb87fd50b165058498",
   "sourceSha256": {
-    "authoring/build-deck.mjs": "3a995b9105ca6b43c0cbfb8468cd37f9ade12225d3533f3de50b1baf83624834",
+    "authoring/build-deck.mjs": "988f2f8aadaf6868f35fa7e575dc686018435e5dad2eb1764c08d8432cb0f6f5",
     "authoring/update-cover.mjs": "175ea65b7cf69739c3d65e8a1dba4910ce470bde96f18e9b25b93fa27501a94d",
     "dist/assets/theme.png": "4494b074902176a7a32254f130dfd62baa5eeffe9c447d88b2c91848f70ae178",
     "dist/downloads/skill-engineering-cover.png": "4a7ed948930794f75531bbb871cd5b2b8e4521175718be53f003f342430a015d",
     "practice/ticket-daily-report/tests/fixtures/normal.json": "96e9c8f7a325124226f2099b82647c74ea5a1f3476f612f73214d79ee7c97b02",
-    "src/content.json": "a733f7f3631b0980ea7d0ac7bba82449f0b52702b49d921a0d776c394927d8c9"
+    "src/content.json": "57db257b6abf7ce0f28bf38022c6763d217536a21087fcf6bfc6753dd9c72881"
   },
   "size": [
     1920,
@@ -21,7 +21,7 @@
     {
       "id": "slide-cover",
       "src": "assets/slides/slide-cover.webp",
-      "sha256": "7aa08691e10e6c88b9d576efe6057fba09e2b7933b64420b06951af40ec513af"
+      "sha256": "95a8e527462560cb78c00a5222bde84c4ca98d324ab67b0b0a29e2697e8d2bf3"
     },
     {
       "id": "slide-01",
@@ -71,7 +71,7 @@
     {
       "id": "slide-09",
       "src": "assets/slides/slide-09.webp",
-      "sha256": "5cf2d08566f85f56cf20bf85f1f3479658b6040a54fe0b22247c849607734e78"
+      "sha256": "7a7729283c1ed01cbb7d1706d6d7509b8f8a9dcdf3db169f20006b6ec04882ce"
     }
   ]
 }

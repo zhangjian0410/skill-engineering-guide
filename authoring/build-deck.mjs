@@ -38,7 +38,7 @@ const cover=p.slides.add();cover.background.fill='#FFFFFF';
 const poster=await fs.readFile(path.join(root,'dist',data.cover.image));
 cover.images.add({blob:poster.buffer.slice(poster.byteOffset,poster.byteOffset+poster.byteLength),contentType:'image/png',alt:data.cover.title,fit:'contain',position:{left:0,top:0,width:1280,height:720}});
 text(cover,'page',`01 / ${String(totalPages).padStart(2,'0')}`,1137,18,96,25,16,C.navy,true,'right');
-cover.speakerNotes.text=`${data.cover.explanation.text}\n\n来源：原版海报 ${data.cover.image}，保留完整画面与比例。\n在线查看：https://skill-engineering-guide.pages.dev/poster\n继续阅读：https://skill-engineering-guide.pages.dev/deep#${data.cover.explanation.deepAnchor}`;
+cover.speakerNotes.text=`${data.cover.explanation.text}\n\n来源：原版海报 ${data.cover.image}，保留完整画面与比例。\n在线查看：https://skill-engineering-guide.pages.dev/poster\n继续阅读：https://archer-ai-courses.pages.dev/courses/skill-engineering/${data.cover.explanation.link.href}`;
 for(const [i,s] of data.slides.entries()){
  const slide=p.slides.add();slide.background.fill='#FFFFFF';
  slide.images.add({blob:bg.buffer.slice(bg.byteOffset,bg.byteOffset+bg.byteLength),contentType:'image/png',alt:'沿原课件的蓝白网格、AI层叠图和波浪页脚',fit:'cover',position:{left:0,top:0,width:1280,height:720}});
@@ -93,11 +93,11 @@ for(const [i,s] of data.slides.entries()){
   text(slide,'grading-note',s.grading_note,48,572,1184,26,20,C.blue);
  }
  if(s.kind==='practice'){
-  panel(slide,'practice-path','今天就可以开始的一次实践',48,256,606,311);s.steps.forEach(([a,b],j)=>{const y=326+j*76;text(slide,`practice-${j}-number`,String(j+1).padStart(2,'0'),69,y,53,40,29,C.cyan,true);text(slide,`practice-${j}-label`,a,139,y,481,32,25,C.navy,true);text(slide,`practice-${j}-body`,b,139,y+38,481,32,21,C.muted);});
+  panel(slide,'practice-path','可选：继续完善自己的 Skill',48,256,606,311);s.steps.forEach(([a,b],j)=>{const y=326+j*76;text(slide,`practice-${j}-number`,String(j+1).padStart(2,'0'),69,y,53,40,29,C.cyan,true);text(slide,`practice-${j}-label`,a,139,y,481,32,25,C.navy,true);text(slide,`practice-${j}-body`,b,139,y+38,481,32,21,C.muted);});
   panel(slide,'feedback-panel','问题反馈',689,256,543,311);text(slide,'feedback-title',s.feedback_title,711,324,499,90,34,C.navy,true);s.feedback_items.forEach((value,j)=>text(slide,`feedback-item-${j}`,value,711,436+j*35,499,31,23,C.blue));
  }
  footer(slide,s,i);
- slide.speakerNotes.text=`本页讲解：${s.explanation.text}\n\n继续阅读：deep.html#${s.explanation.deepAnchor}\n\n来源与对应：${s.source}\n本课件依据原分享对话和原图片，用户要求保留知识主线与视觉。参考： https://agentskills.io/specification https://docs.qoder.com/zh/qoder/skills https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices \n\n${s.kind==='package'?'参考包的 pipeline.py 执行输入检查、处理与校验。目标同事的 Qoder 环境仍需分别验证。':''}`;
+ slide.speakerNotes.text=`本页讲解：${s.explanation.text}\n\n${s.explanation.link.label}：https://archer-ai-courses.pages.dev/courses/skill-engineering/${s.explanation.link.href}\n\n来源与对应：${s.source}\n本课件依据原分享对话和原图片，用户要求保留知识主线与视觉。参考： https://agentskills.io/specification https://docs.qoder.com/zh/qoder/skills https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices \n\n${s.kind==='package'?'参考包的 pipeline.py 执行输入检查、处理与校验。目标同事的 Qoder 环境仍需分别验证。':''}`;
 }
 await fs.mkdir(path.join(root,'build/slides'),{recursive:true});
 for(const [i,slide] of p.slides.items.entries()){

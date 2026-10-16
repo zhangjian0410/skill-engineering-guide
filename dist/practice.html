@@ -1,0 +1,76 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>动手做：四步创建并复用 Skill · Skill Engineering</title><meta name="description" content="从还没安装日报 Skill 开始，在这一页完成操作、检查和保存。"><link rel="stylesheet" href="style.css"><script src="app.js" defer></script><script src="site-interactions.js" type="module"></script></head><body data-page-id="skill-engineering:practice"><a class="skip" href="#start">跳到正文</a><header class="site-header"><a class="brand" href="index.html#slide-cover">Skill Engineering<span>AI 实践课程</span></a><nav aria-label="课程学习导航"><a href="courses.html">课程目录</a><a href="index.html#slide-cover">看课件</a><a href="practice.html#start">动手做</a><details class="course-resources"><summary>学习资料</summary><div><a href="deep.html">深入阅读（选读）</a> · <a href="advanced.html#start">进阶跟练（选做）</a> · <a href="downloads/skill-engineering.pdf" download>PDF</a> · <a href="downloads/skill-engineering.pptx" download>PPTX</a></div></details></nav></header><main class="reading"><p class="lesson-label">Skill Engineering · 2026-10-16</p><h1>动手做：四步创建并复用 Skill</h1><p class="lead">从还没安装日报 Skill 开始，在这一页完成操作、检查和保存。</p><nav aria-label="四步跟练目录"><a href="#start">开始前</a> · <a href="#ticket-practice">① 完成任务</a> · <a href="#qoder">② 提炼</a> · <a href="#install-skill">③ 安装</a> · <a href="#new-chat">④ 新 Chat</a> · <a href="#done">完成检查</a></nav><section id="start"><span id="practice-route"></span>
+<h2>从还没安装日报 Skill 开始</h2>
+<p>先安装并登录 <a href="https://qoder.com/">Qoder</a>，确认账户可用。本页使用 Qoder 的通用模式，它需要能读取练习文件、运行处理并保存结果；不同版本的按钮位置可参考<a href="https://docs.qoder.com/qoder/quickstart">官方入门</a>。Python、依赖和代码由 Qoder 检查配置，不需要先手工安装。全部输入都是虚构工单，可以放心跟练。你负责确认规则、核对数字；处理代码和 Skill 文件交给 AI 整理。</p>
+<p>本例的数据已提供，统计口径会在第一步确认，Qoder 需要能运行本地处理脚本。本课无需自己提供模型 API Key，使用 Qoder 账户的可用额度即可。</p>
+<ol>
+<li><a href="#ticket-practice">普通 Chat 完成任务</a>：得到一份核对正确的日报。</li>
+<li><a href="#qoder">提炼 Skill</a>：得到自己创建的完整 Skill ZIP。</li>
+<li><a href="#install-skill">安装</a>：在已安装列表中找到它。</li>
+<li><a href="#new-chat">新 Chat 验证</a>：只给数据、日期和输出位置，重做日报。</li>
+</ol>
+<p>今天先完成这四步和末尾检查。基础练习不要求生成 tests/evals；想继续完善时，再打开后面的选做进阶跟练。</p>
+<p>Chat 指一次对话；Skill 是把处理方法和所需文件保存为可复用能力。第一次还没保存方法，需要把业务规则告诉 AI。提炼、安装之后，日常使用只说本次要处理什么文件、哪一天、结果放哪里。页面上的提示词是示例，可以用自己的话说。</p>
+</section><section id="ticket-practice">
+<h2>1. 用普通 Chat 完成一次工单日报</h2>
+<p><strong>现在有什么：</strong>只有一份工单数据，还没有你自己的日报 Skill。</p>
+<h3>你要做什么</h3>
+<ol>
+<li>在电脑上新建一个专门的练习文件夹，例如“工单日报练习”。<a href="downloads/ticket-inputs/normal.json" download>下载工单样例 normal.json</a>，放进这个文件夹。JSON 是这次练习的数据文件，无需手工编辑。</li>
+<li>打开 Qoder，切到<strong>通用</strong>，点击<strong>新的任务</strong>。在输入框下方选择工作目录；还没添加过时，点<strong>新建工作区 → 点击添加可读写文件夹</strong>，选择刚才的练习文件夹，再点<strong>创建</strong>。确认任务下方显示的是这个文件夹。</li>
+<li>展开下面的提示词，复制到 Chat。此时直接描述任务，不需要选择日报 Skill。</li>
+</ol>
+<p>运行中可能出现<strong>等待你处理</strong>或<strong>工具执行确认</strong>。看清它要读取的文件、生成的位置或运行的命令；与这次练习一致时点<strong>允许一次</strong>。确认完成前，任务会暂停等待。这些弹窗在后续步骤也可能出现。若请求读取无关资料或删除文件，点<strong>拒绝</strong>，再告诉它只处理练习文件、保留验证结果。</p>
+<details class="prompt"><summary>复制：普通 Chat 的日报任务</summary><pre id="chat-task">先按普通 Chat 完成任务，不调用或安装日报 Skill。读取 normal.json，统计 2026-10-10 创建的工单当前状态。
+
+四个必填字段：ticket_id 是非空 ID，created_date 是有效日期（YYYY-MM-DD），status 只接受 completed（完成）或 open（待处理），minutes 是整数分钟数，完成单大于 0、待处理单为 0。先检查全部记录，缺字段或值不合法就停止并说明原因。
+同一 ID 的日期、状态、耗时完全一致时保留一条；有不一致就停止，列出差异等我确认。
+
+告诉我总数、完成数、待处理数、完成单总耗时与平均耗时。平均只除以完成单数，保留两位小数；没有完成单时写不适用。实际运行计算，保存日报和处理代码到新的 ticket-first-run 文件夹，保留已有文件，并说明计算过程和文件位置。</pre><button type="button" data-copy="chat-task">复制提示词</button><span class="copy-status" aria-live="polite"></span></details>
+<h3>应该看到什么</h3>
+<p>Qoder 返回日报文件的位置和计算过程。打开日报，逐项核对：</p>
+<table><thead><tr><th scope="col">核对项</th><th scope="col">本例应得到</th></tr></thead><tbody><tr><th scope="row">统计日期</th><td>2026-10-10</td></tr><tr><th scope="row">总工单数</th><td>5 单</td></tr><tr><th scope="row">完成 / 待处理</th><td>3 单 / 2 单</td></tr><tr><th scope="row">完成工单总耗时</th><td>195 分钟</td></tr><tr><th scope="row">完成单平均耗时</th><td>195 ÷ 3 = 65 分钟</td></tr></tbody></table>
+<p>原文件有 7 行：T004 完全重复，保留一条；T006 是 10 月 11 日创建的，本次排除。完成单耗时为 60、45、90 分钟，平均只除以 3 个完成单。这里统计的是 10 月 10 日创建工单的当前状态。</p>
+<p><strong>什么叫内容冲突：</strong>同一个 ID 出现两次，但日期、状态或耗时不同。例如 T001 一行写 60 分钟、另一行写 90 分钟，AI 无法知道该信哪行，应该列出差异等你确认。不同 ID 是不同工单，不算冲突；同 ID 完全相同只是重复，保留一条即可。</p>
+<p><strong>核对一致后再继续。</strong>如果平均值出现 39 分钟，让 Qoder 检查是否错误地除以了全部 5 单。如果没读到文件、脚本报错或数字不符，先在这个 Chat 中让它修复并实际重跑，再保存核对后的日报和实际使用的处理代码。</p>
+<p><a href="#qoder">日报核对正确，继续提炼 Skill →</a></p></section>
+<section id="qoder">
+<h2>2. 把刚才成功的方法提炼成 Skill</h2>
+<p><strong>现在有什么：</strong>同一个 Chat 中已有输入、规则、处理代码和核对正确的日报。</p>
+<h3>你要做什么</h3>
+<p>留在刚才的 Chat，请它把已经做对的方法保存成完整 Skill 包。自己的练习技能统一命名为 <code>my-ticket-daily-report</code>，方便和后面的参考包区分。本步只生成文件，安装在第三步做。</p>
+<details class="prompt"><summary>复制：把成功任务提炼成 Skill</summary><pre id="create">日报已核对正确。请把刚才的方法整理成 my-ticket-daily-report.zip，供新 Chat 复用。
+保存已确认的业务规则和实际用过的处理脚本。入口 SKILL.md 含 name、description 元数据，写清使用条件、输入、调用包内脚本及停止条件。新 Chat 只给输入文件、日期和新输出目录就能运行，不依赖旧聊天或本机固定路径。
+沿用异常停止和保留已有文件的规则，在当前练习目录生成完整 Skill 文件夹与 ZIP，告诉我位置。本步只生成，暂不安装。</pre><button type="button" data-copy="create">复制提示词</button><span class="copy-status" aria-live="polite"></span></details>
+<h3>应该看到什么</h3>
+<p>Qoder 给出 <code>my-ticket-daily-report.zip</code> 的文件位置，列出里面保存的内容：</p>
+<ul><li><code>SKILL.md</code>：何时使用、需要什么输入、怎样处理、何时停止。</li><li>已确认的业务规则：日期筛选、去重和平均耗时的口径。简短规则可写在 <code>SKILL.md</code>，较长时放 <code>references/</code>。</li><li>处理脚本：保存已经核对过的计算方法，供下次调用。</li></ul>
+<p>另行保留第一步的输入和确认结果，供第四步核对。如果它只在 Chat 中输出了一段说明，让它继续生成完整文件夹并压缩。打开 Skill 说明，检查规则是否与第一步一致；确认脚本只处理指定的本地文件。</p>
+<p>以后每次都要遵守的规则、调用脚本的方法、失败时怎样停止，应保存在 Skill 中。下次用户只提供本次参数。若还需要靠长提示词补齐这些内容，先把遗漏补进 Skill。</p>
+<p><strong>有了完整 ZIP 才进入安装。</strong>业务同事无需自己编写代码，但要确认保存的方法就是刚才做对的方法。</p>
+<p><a href="#install-skill">完整 ZIP 已生成，继续安装 →</a></p></section>
+<section id="install-skill">
+<h2>3. 安装自己刚创建的 Skill</h2>
+<p><strong>现在有什么：</strong>第二步生成的 <code>my-ticket-daily-report.zip</code>，尚未安装。</p>
+<h3>你要做什么</h3>
+<ol><li>在 Qoder 左侧打开<strong>扩展 → 技能</strong>。</li><li>选择<strong>添加技能 → 上传 Skill</strong>，选中第二步的 <code>my-ticket-daily-report.zip</code> 并打开。这里上传自己创建的完整包。</li><li>安装成功后，会进入<strong>扩展管理 → 技能</strong>，在<strong>本地 Skill</strong>列表中确认 <code>my-ticket-daily-report</code> 和“已安装”标记。同名技能已经存在时，先核对版本，避免覆盖别人的内容。</li></ol>
+<p>操作依据：<a href="https://docs.qoder.com/zh/qoder/skills" target="_blank" rel="noopener">Qoder 官方安装指南</a>。不同版本的按钮名称可能略有差异，找到上传本地技能的入口即可。</p>
+<h3>应该看到什么</h3>
+<p>已安装列表里出现你的技能名称。点<strong>返回应用</strong>，再新建一个任务，在输入框键入 <code>/</code>，建议列表中也能找到它。选中后，输入框会出现 <code>@my-ticket-daily-report</code> 标签。</p>
+<p>如果找不到，先检查 ZIP 中是否包含 <code>SKILL.md</code> 和所需脚本。可以把报错给刚才创建文件的 Chat，请它检查包结构。安装成功后进入第四步。</p>
+<p><a href="#new-chat">确认已安装，继续在新 Chat 验证 →</a></p></section>
+<section id="new-chat">
+<h2>4. 在新 Chat 中验证能否复用</h2>
+<p><strong>现在有什么：</strong>已安装的日报 Skill，以及第一步保存的输入和正确结果。</p>
+<h3>你要做什么</h3>
+<ol><li>在电脑上新建一个“工单日报验证”文件夹，只把第一步的 <code>normal.json</code> 复制进去。保留原练习文件夹和正确日报，供核对。</li><li>新建一个全新的任务，不沿用前两步的 Chat。按第一步添加工作区的方法，选择刚建的验证文件夹；确认输入框下方显示这个目录。</li><li>输入 <code>/</code>，选择 <code>my-ticket-daily-report</code>。看到 <code>@my-ticket-daily-report</code> 标签后，在它后面粘贴下面的提示词。输出使用一个新的文件夹。</li></ol>
+<details class="prompt"><summary>复制：安装后在新 Chat 中运行</summary><pre id="practice">用 normal.json 生成 2026-10-10 的工单日报，保存到新的 ticket-second-run 文件夹。</pre><button type="button" data-copy="practice">复制提示词</button><span class="copy-status" aria-live="polite"></span></details>
+<h3>应该看到什么</h3>
+<p>Qoder 读取已安装的 Skill，调用其中保存的处理脚本，交付新的日报和核对记录。日报仍为 5 单、完成 3 单、待处理 2 单，完成单平均耗时 65 分钟。</p>
+<p>展开回复中的<strong>执行工具</strong>，查看加载的技能和实际运行的脚本，打开交付文件核对数字。脚本应该来自已安装的 <code>my-ticket-daily-report</code>，而非临时重写或原练习目录的副本。不同产品的安装路径和脚本名可以不同。新的验证文件夹只放输入数据，方便分辨来源。如果它要求你重新讲业务规则，返回第二步补齐 Skill，再更新安装并重试。</p>
+<h3>再试一次变化和一次异常</h3>
+<ul><li><a href="downloads/ticket-inputs/changed.json" download>下载变化样例 changed.json</a>，放进同一验证文件夹。另开新 Chat，仍选择验证目录和同一个 Skill，把提示词中的输入改为 <code>changed.json</code>、日期改为 <code>2026-10-11</code>，输出改为新的 <code>ticket-changed-run</code>。应该得到 1 单完成、0 单待处理、总耗时 30 分钟、平均 30 分钟。</li><li><a href="downloads/ticket-inputs/missing-field.json" download>下载缺字段样例 missing-field.json</a>，放进同一验证文件夹。另开新 Chat，仍选择验证目录和同一个 Skill，把输入改为 <code>missing-field.json</code>，日期仍用 <code>2026-10-10</code>，输出改为新的 <code>ticket-missing-run</code>。应该指出缺失字段并停止，不生成成功日报。</li></ul>
+<p><strong>这轮练习完成的标志：</strong>普通 Chat 中做对一次，保存成 Skill 并安装；新 Chat 能复用，同口径处理变化，遇到缺字段能停下来。记下输入、日期、实际结果、输出位置和遇到的问题。</p>
+<p>四步完成后，按下面的完成检查逐项核对。</p>
+
+<details><summary>卡住时再看：路径、打包和复用问题</summary><ul><li>找不到输入文件：确认任务下方的工作目录和文件位置。可以补一句“先确认当前工作目录，再找输入文件”，无需每次规定它运行哪条命令。</li><li>创建时反复查模板：补一句“直接整理刚才核对过的规则与脚本。SKILL.md 开头用 YAML 的 name 和 description，打包完整文件夹”，再核对 ZIP。</li><li>新 Chat 没有使用保存的脚本：把执行记录交给创建 Skill 的 Chat，要求修复入口中的调用方法。更新安装后，另开新 Chat，仍用上面的短任务重测；临时追加脚本路径只算排错。</li></ul></details>
+</section><section id="done"><h2>完成检查：做到这里就完成基础练习</h2><table><thead><tr><th>检查项</th><th>应该看到什么</th></tr></thead><tbody><tr><td>普通 Chat</td><td>5 单，完成 3、待处理 2，195 ÷ 3 = 65 分钟</td></tr><tr><td>提炼与安装</td><td>完整 my-ticket-daily-report.zip；安装列表中能找到同名 Skill</td></tr><tr><td>新 Chat 正常案</td><td>实际使用安装包内脚本，结果仍是 5 / 3 / 2、平均 65</td></tr><tr><td>变化案 changed.json，2026-10-11</td><td>1 单完成、0 单待处理，平均 30 分钟</td></tr><tr><td>缺字段案 missing-field.json</td><td>指出缺失字段并停止，没有成功日报</td></tr></tbody></table><p>保留练习与验证文件夹、完整 Skill ZIP、正确日报和工具执行记录。以后打开 Qoder，在新任务中选择对应工作目录和已安装 Skill，给本次文件、日期和新的输出位置即可；不必重新讲算法。</p><p>遇到问题，先把实际输入、预期、实际结果和不含客户信息的执行记录交给 Qoder 修复，再更新安装并重测。不需要通过进阶练习才算完成本课。</p><p><a href="advanced.html#start">可选：继续进阶跟练</a> · <a href="deep.html">选读：理解 Skill 的原理与边界</a></p></section></main><section class="course-feedback" id="course-feedback" data-feedback-course="skill-engineering" aria-labelledby="feedback-title"><div class="feedback-intro"><p class="lesson-label">一起把课程改得更好</p><h2 id="feedback-title">点赞、拍砖，或留一句话</h2><p>不用登录，也不用实名。哪里有用、哪里看不懂，都可以告诉我们。</p></div><div class="reactions"><button type="button" data-reaction="like" aria-pressed="false" disabled>👍 点赞 <span>—</span></button><button type="button" data-reaction="brick" aria-pressed="false" disabled>🧱 拍砖 <span>—</span></button></div><form class="comment-form"><fieldset><legend>你的反馈</legend><label for="comment-body">留言 <span>必填 · 最多 1000 字</span></label><textarea id="comment-body" name="body" required maxlength="1000" rows="4" placeholder="例如：测试和评估，我还想看一个写作任务的例子。"></textarea><div class="comment-optional"><div><label for="comment-name">称呼 <span>选填 · 会公开</span></label><input id="comment-name" name="name" maxlength="40" placeholder="昵称即可" autocomplete="nickname"></div><div><label for="comment-contact">联系方式 <span>选填 · 仅讲师可见</span></label><input id="comment-contact" name="contact" maxlength="200" placeholder="邮箱、微信或其他方便联系的方式" autocomplete="off"></div></div><p class="contact-note">留言和称呼会公开。选填联系方式只为方便讲师联系你，不会展示在页面上。</p><button type="submit" disabled>发布留言</button></fieldset></form><p class="feedback-status" data-feedback-status role="status">开启 JavaScript 后可参与互动。</p><ul class="comment-list" data-comments aria-label="近期留言"></ul><noscript><p>开启 JavaScript 后可点赞和发布留言。</p></noscript></section><footer class="byline">AI 经营交付效能专项组 <span>v2.9</span></footer></body></html>

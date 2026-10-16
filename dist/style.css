@@ -77,3 +77,6 @@
 @media(min-width:851px){
  .js .slide .preview-status:not([hidden]){position:absolute;inset:0;display:grid;place-items:center;width:auto;height:auto;margin:0;padding:24px;clip-path:none;white-space:normal;background:#fff;color:var(--muted);font-size:16px;line-height:1.7;text-align:center;border:0}
 }
+
+/* Optional resources stay out of the two-action primary route. */
+.course-resources{position:relative}.course-resources>summary{cursor:pointer;list-style:none;padding:10px;min-height:44px}.course-resources>summary::after{content:" ▾"}.course-resources>div{position:absolute;right:0;z-index:30;min-width:220px;max-width:calc(100vw - 32px);padding:8px;background:#fff;border:1px solid var(--line);border-radius:6px}.course-resources>div>a{display:block;padding:10px;min-height:44px}

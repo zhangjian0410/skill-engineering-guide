@@ -57,15 +57,16 @@ test('built preview and download are byte-equivalent to the canonical prompt',()
   assert.deepEqual(fs.readFileSync(path.join(root,'dist/downloads/skill-self-review.txt')),fs.readFileSync(path.join(root,'prompts/skill-self-review.txt')));
   assert.deepEqual(fs.readFileSync(path.join(root,'dist/self-review.js')),fs.readFileSync(path.join(root,'src/self-review.js')));
 });
-test('local routes on all three pages resolve to actual public files',()=>{
-  for(const page of ['index.html','deep.html','self-review.html']) {
+test('local learning routes resolve and self-review remains in optional advanced practice',()=>{
+  for(const page of ['index.html','deep.html','practice.html','advanced.html','self-review.html']) {
     const html=fs.readFileSync(path.join(root,'dist',page),'utf8');
     for(const [,url] of html.matchAll(/(?:href|src)="([^"]+)"/g)) {
       if(url.startsWith('#')||/^https?:/.test(url))continue;
       const file=decodeURIComponent(new URL(url,'https://course.invalid/').pathname).slice(1);
       assert.ok(fs.existsSync(path.join(root,'dist',file)),`${page}: ${url}`);
     }
-    assert.ok(html.includes('self-review.html')||page==='self-review.html');
+    assert.ok(html.includes('advanced.html')||page==='self-review.html');
+    if(page==='advanced.html')assert.ok(html.includes('self-review.html'));
   }
 });
 test('trial metadata and synthetic corpus do not claim unrun model acceptance',()=>{

@@ -10,7 +10,7 @@
 
 - `dist/`：可直接发布的网站，包含原海报、可编辑十一页 PPTX、十一页 PDF、同源讲解 PDF 和虚构数据练习包。
 - `src/content.json`：海报封面、十页核心文案与 explanation 讲解源。`style.css` 与 `app.js` 控制网页视觉与阅读行为。
-- `src/prompts.json`：可复制的创建、实践和反馈提示词。`deep-template.html` 是深入阅读的模板。
+- `src/prompts.json`：可复制的创建、实践和反馈提示词。`practice-template.html` 是基础四步；`advanced-template.html` 是选做进阶操作；`deep-template.html` 只解释原理与边界。
 - `references/`：原海报、六张原知识课件和最后九页结构摘录。原五期培训安排已按要求排除。
 - `authoring/`：PPTX 和 PDF 的生成源码。
 - `practice/`：下载练习包的源码和虚构工单数据。
@@ -67,7 +67,7 @@ npm run package
 
 Portal 仓库使用固定 Wrangler 4.149.0 验证共享 API、隐私、去重、限流、持久化与一次性交接。使用 `LEGACY_SOURCE_DIR` 指向本仓库可核对真实旧网址桥接；所有合成留言只在隔离本地 D1 运行。课程独立预览继续用 `tests/course-browser.mjs` 验证十一页导航、封面、全屏和讲解；完整同源网页检查位于 Portal 的 `tests/portal-browser.mjs`。
 
-`deep` 跟练页从未安装自己的日报 Skill 开始，顺序为普通 Chat、提炼、安装、新 Chat 验证。维护 `src/deep-template.html` 和 `src/prompts.json` 中的 `deep-*` 提示词；独立输入下载从 `practice/ticket-daily-report/tests/fixtures/` 生成，现成参考 Skill 留在进阶部分。
+`practice` 跟练页从未安装自己的日报 Skill 开始，顺序为普通 Chat、提炼、安装、新 Chat 验证。维护 `src/practice-template.html`、`src/advanced-template.html` 和 `src/prompts.json` 中的 `deep-*` 提示词；独立输入下载从 `practice/ticket-daily-report/tests/fixtures/` 生成，现成参考 Skill 留在进阶部分。
 
 ## 练习边界
 
@@ -142,3 +142,7 @@ Deep 与第 9 页补齐准备材料、确认计划、生成文件、实际运行
 只改封面时，先更新 `src/content.json` 的封面图片与说明，再在原有 authoring 运行环境执行 `node authoring/update-cover.mjs`。它导入发布版 PPT，只替换封面图片、页码位置和封面备注，保留其余十页可编辑内容。PPT 经验证后复制到下载目录，重新导出两份 PDF 与预览。新封面为 `downloads/skill-engineering-cover.png`，原图解仍为 `downloads/poster.png`。
 
 网页逐页展示的是 PPT 渲染图，普通 HTML/CSS/JavaScript 控制翻页和讲解，不加载在线 PowerPoint。桌面先准备当前页，完成后依次提前加载后两页和前一页；手机正文使用 HTML，不下载整套桌面预览。网页预览可有轻微压缩差异，下载版 PPT/PDF 不压缩或重建。图片有加载/失败提示，资源 URL 带内容摘要防止旧缓存混用。
+
+## v2.9 基础、进阶与原理分工
+
+主流程是看课件、动手做。practice.html 从准备到四步和完成检查独立完成，advanced.html 在基础完成后选做，deep.html 解释方法、边界与评估原理，不重复操作提示词。旧 deep 操作锚点通过固定映射迁到新页，关闭 JavaScript 时提供普通导航。PPT、图解 PDF 和讲解 PDF 使用对应目的链接。三条基础任务和四条验证提示词沿用此前实跑版本，重排页面不等于新增模型试跑。
